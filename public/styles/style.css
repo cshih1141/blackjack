@@ -7,11 +7,12 @@
 
 .Cards {
   display:flex;
+  justify-content: flex-start;
 }
 
-.player1 {
+/* .player1 {
   flex:1;
-}
+} */
 
 .cardSVG {
   width:100px;

@@ -1,7 +1,7 @@
 import React from 'react';
 
-const Card = ({card, index, currPlayer}) => (
-  <div className={'card ' + currPlayer} id={'card' + index}>
+const Card = ({card, index}) => (
+  <div className={'card'} id={'card' + index}>
     <img className="cardSVG" src={'./styles/images/cards/' + card + '.svg'}/>
   </div>
 )
