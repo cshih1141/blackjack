@@ -4,3 +4,24 @@
   border:0;
   background-image: url("./images/felt.jpg");
 }
+
+.Cards {
+  display:flex;
+}
+
+.player1 {
+  flex:1;
+}
+
+.cardSVG {
+  width:200%;
+}
+
+#hit, #stay {
+  cursor: pointer;
+  height: 50px;
+  width: 200px;
+  outline-width: 1px;
+  outline-style: solid;
+  outline-color: black;
+}

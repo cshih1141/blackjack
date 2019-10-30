@@ -1,8 +1,8 @@
 import React from 'react';
 
-const Card = ({card}) => (
-  <div className="hand hhand-compact active-hand">
-    <img className='card' src={'./styles/images/cards/' + card + '.svg'}/>
+const Card = ({card, index, currPlayer}) => (
+  <div className={'card ' + currPlayer} id={'card' + index}>
+    <img className="cardSVG" src={'./styles/images/cards/' + card + '.svg'}/>
   </div>
 )
 
