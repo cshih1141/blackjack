@@ -26,9 +26,27 @@ class App extends React.Component {
   }
 
   dealCard() {
-    let randomCard = this.getRandomCard(52);
+    let randomSuit = this.getRandomCard(4);
+    let randomNumber = this.getRandomCard(13);
 
+    let randomCard = this.state.cardNumber[randomNumber] + this.state.suits[randomSuit];
+
+    let playerType = this.state.currPlayer === 'player1' ? 'player1Cards' : 'dealerCards';
+    let playerCards;
+
+    if (this.state.currPlayer === 'player1') {
+      playerCards = this.state.player1Cards.slice(0);
+    } else {
+      playerCards = this.state.dealerCards.slice(0);
+    }
+
+    playerCards.push(randomCard);
+    this.setState({
+      [playerType] : playerCards
+    });
   }
+
+  
 
   completeTurn() {
     let currPlayer = this.state.currPlayer;
@@ -62,8 +80,14 @@ class App extends React.Component {
   render() {
     return (
       <div>
-        <div className="Cards">
-          {this.state.deck.map((card, key) => <Card card={card}
+        <div className="Cards DealerCards">
+          {this.state.dealerCards.map((card, key) => <Card card={card}
+                                                    key={key} 
+                                                    index={key} 
+                                                    currPlayer={this.state.currPlayer}/>)}
+        </div>
+        <div className="Cards PlayerCards">
+          {this.state.player1Cards.map((card, key) => <Card card={card}
                                                     key={key} 
                                                     index={key} 
                                                     currPlayer={this.state.currPlayer}/>)}
