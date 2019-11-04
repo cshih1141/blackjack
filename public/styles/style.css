@@ -15,18 +15,19 @@
 }
 
 .PlayerCards {
-  justify-content: space-between;
+  justify-content: center;
 
   position: absolute;
   bottom: 150px;
+  left: 40%;
+  background: transparent;
 }
 
 .cardSVG {
   width:100px;
-
 }
 
-#card2{
+/* #card2{
   transform: translateX(-80px);
 }
 
@@ -36,7 +37,7 @@
 
 #card3 {
   transform: translateX(-160px);
-}
+} */
 
 #hit, #stay {
   cursor: pointer;
@@ -45,4 +46,15 @@
   outline-width: 1px;
   outline-style: solid;
   outline-color: black;
+  position: absolute;
+  left: 40%;
+}
+
+#hit {
+  bottom: 60px;
+
+}
+
+#stay {
+  bottom: 10px;
 }

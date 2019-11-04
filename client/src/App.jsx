@@ -12,7 +12,8 @@ class App extends React.Component {
       deck: [],
       currPlayer: 'player1',
       dealerCards: [],
-      player1Cards: []
+      player1Cards: [],
+      player1Translate: 80,
     }
 
     this.createDeck = this.createDeck.bind(this);
@@ -25,6 +26,8 @@ class App extends React.Component {
     return Math.floor(Math.random() * Math.floor(totalCards));
   }
 
+  //need to make it so theres a setInterval after last player stays for when
+  //dealers turn to hit. will keep going until they need to stay or bust.
   dealCard() {
     let randomSuit = this.getRandomCard(4);
     let randomNumber = this.getRandomCard(13);
@@ -32,17 +35,20 @@ class App extends React.Component {
     let randomCard = this.state.cardNumber[randomNumber] + this.state.suits[randomSuit];
 
     let playerType = this.state.currPlayer === 'player1' ? 'player1Cards' : 'dealerCards';
+    let playerTranslate = this.state.currPlayer === 'player1' ? 'player1Translate' : 'dealerTranslate';
     let playerCards;
-
+    let translate = 0;
     if (this.state.currPlayer === 'player1') {
       playerCards = this.state.player1Cards.slice(0);
+      translate = this.state.player1Translate - 80;
     } else {
       playerCards = this.state.dealerCards.slice(0);
     }
 
     playerCards.push(randomCard);
     this.setState({
-      [playerType] : playerCards
+      [playerType] : playerCards,
+      [playerTranslate] : translate
     });
   }
 
@@ -90,7 +96,8 @@ class App extends React.Component {
           {this.state.player1Cards.map((card, key) => <Card card={card}
                                                     key={key} 
                                                     index={key} 
-                                                    currPlayer={this.state.currPlayer}/>)}
+                                                    currPlayer={this.state.currPlayer}
+                                                    player1Translate={this.state.player1Translate}/>)}
         </div>
         <div>
           <button id="hit" onClick={this.dealCard}>hit</button>

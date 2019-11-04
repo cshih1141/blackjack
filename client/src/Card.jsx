@@ -1,9 +1,19 @@
 import React from 'react';
 
-const Card = ({card, index}) => (
-  <div className={'card'} id={'card' + index}>
-    <img className="cardSVG" src={'./styles/images/cards/' + card + '.svg'}/>
-  </div>
-)
+class Card extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.player1Translate = this.props.player1Translate;
+  }
+
+  render() {
+    return (
+      <div className={'card'} id={'card' + this.props.index} style={{transform: `translateX(${this.player1Translate}px)`}}>
+        <img className="cardSVG" src={'./styles/images/cards/' + this.props.card + '.svg'}/>
+      </div>
+    );
+  }
+}
 
 export default Card;
