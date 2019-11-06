@@ -1,7 +1,8 @@
 import React from 'react';
 import Card from './Card';
 
-
+//add in num decks and use random shuffle. remove decks from shoe when dealing
+//write down different situations - split hands, double down hands etc
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -19,21 +20,16 @@ class App extends React.Component {
     this.createDeck = this.createDeck.bind(this);
     this.completeTurn = this.completeTurn.bind(this);
     this.dealCard = this.dealCard.bind(this);
-    this.getRandomCard = this.getRandomCard.bind(this)
+    this.getRandomCard = this.getRandomCard.bind(this);
+    this.shuffleDeck = this.shuffleDeck.bind(this);
   }
 
-  getRandomCard(totalCards) {
-    return Math.floor(Math.random() * Math.floor(totalCards));
-  }
 
   //need to make it so theres a setInterval after last player stays for when
   //dealers turn to hit. will keep going until they need to stay or bust.
+  //change this to deal from deck instead of making a random card each time
+  //TODO: end the shoe when there's only x% left.
   dealCard() {
-    let randomSuit = this.getRandomCard(4);
-    let randomNumber = this.getRandomCard(13);
-
-    let randomCard = this.state.cardNumber[randomNumber] + this.state.suits[randomSuit];
-
     let playerType = this.state.currPlayer === 'player1' ? 'player1Cards' : 'dealerCards';
     let playerTranslate = this.state.currPlayer === 'player1' ? 'player1Translate' : 'dealerTranslate';
     let playerCards;
@@ -45,10 +41,12 @@ class App extends React.Component {
       playerCards = this.state.dealerCards.slice(0);
     }
 
-    playerCards.push(randomCard);
+    let deck = this.state.deck.slice(0);
+    playerCards.push(deck.pop());
     this.setState({
       [playerType] : playerCards,
-      [playerTranslate] : translate
+      [playerTranslate] : translate,
+      deck
     });
   }
 
@@ -67,6 +65,23 @@ class App extends React.Component {
     }, () => console.log(this.state.currPlayer));
   }
 
+  getRandomCard(min, max) {
+    return min +  (Math.floor(Math.random() * Math.floor(max - min)));
+  }
+
+  shuffleDeck(deck) {
+    let tempStorage = '';
+    let randomIndex;
+    for(let i = 0; i < deck.length; i++) {
+      randomIndex = this.getRandomCard(i, deck.length);
+      tempStorage = deck[i];
+      deck[i] = deck[randomIndex];
+      deck[randomIndex] = tempStorage;
+    }
+  
+    return deck;
+  };
+
   createDeck() {
     let deck = [];
     for(let i = 0; i < this.state.suits.length; i++) {
@@ -74,6 +89,9 @@ class App extends React.Component {
         deck.push(this.state.cardNumber[j] + this.state.suits[i]);
       }
     }
+
+    this.shuffleDeck(deck);
+
     this.setState({
       deck
     });
