@@ -14,7 +14,8 @@ class App extends React.Component {
       currPlayer: 'player1',
       dealerCards: [],
       player1Cards: [],
-      player1Translate: 80,
+      player1TranslateX: 80,
+      player1TranslateY: 0,
     }
 
     this.createDeck = this.createDeck.bind(this);
@@ -31,12 +32,15 @@ class App extends React.Component {
   //TODO: end the shoe when there's only x% left.
   dealCard() {
     let playerType = this.state.currPlayer === 'player1' ? 'player1Cards' : 'dealerCards';
-    let playerTranslate = this.state.currPlayer === 'player1' ? 'player1Translate' : 'dealerTranslate';
+    let playerTranslateX = this.state.currPlayer === 'player1' ? 'player1TranslateX' : 'dealerTranslateX';
+    let playerTranslateY = this.state.currPlayer === 'player1' ? 'player1TranslateY' : 'dealerTranslateY';
     let playerCards;
-    let translate = 0;
+    let translateX = 0;
+    let translateY = 0;
     if (this.state.currPlayer === 'player1') {
       playerCards = this.state.player1Cards.slice(0);
-      translate = this.state.player1Translate - 80;
+      translateX = this.state.player1TranslateX - 90;
+      translateY = this.state.player1TranslateY -40;
     } else {
       playerCards = this.state.dealerCards.slice(0);
     }
@@ -45,7 +49,8 @@ class App extends React.Component {
     playerCards.push(deck.pop());
     this.setState({
       [playerType] : playerCards,
-      [playerTranslate] : translate,
+      [playerTranslateX] : translateX,
+      [playerTranslateY] : translateY,
       deck
     });
   }
@@ -115,7 +120,8 @@ class App extends React.Component {
                                                     key={key} 
                                                     index={key} 
                                                     currPlayer={this.state.currPlayer}
-                                                    player1Translate={this.state.player1Translate}/>)}
+                                                    player1TranslateX={this.state.player1TranslateX}
+                                                    player1TranslateY={this.state.player1TranslateY}/>)}
         </div>
         <div>
           <button id="hit" onClick={this.dealCard}>hit</button>
