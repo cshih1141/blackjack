@@ -18,6 +18,7 @@ class App extends React.Component {
       dealerCards: [],
       playerXTranslations:[[[80]]],
       playerYTranslations:[[[0]]],
+      splitButtonStatus: 'visible'
     }
 
     this.createDeck = this.createDeck.bind(this);
@@ -26,6 +27,9 @@ class App extends React.Component {
     this.getRandomCard = this.getRandomCard.bind(this);
     this.shuffleDeck = this.shuffleDeck.bind(this);
     this.handleHandPossibilities = this.handleHandPossibilities.bind(this);
+    this.doubleDown = this.doubleDown.bind(this);
+    this.splitHand = this.splitHand.bind(this);
+    this.softHand = this.softHand.bind(this);
   }
 
 
@@ -50,8 +54,6 @@ class App extends React.Component {
     let deck = this.state.deck.slice(0);
     playerCards.push(deck.pop());
 
-
-
     if(this.state.currPlayer === -1) {
       this.setState({
         dealerCards: playerCards,
@@ -74,30 +76,6 @@ class App extends React.Component {
       });
     }
   }
-  // dealCard() {
-  //   let playerType = this.state.currPlayer === 'player1' ? 'player1Cards' : 'dealerCards';
-  //   let playerTranslateX = this.state.currPlayer === 'player1' ? 'player1TranslateX' : 'dealerTranslateX';
-  //   let playerTranslateY = this.state.currPlayer === 'player1' ? 'player1TranslateY' : 'dealerTranslateY';
-  //   let playerCards;
-  //   let translateX = 0;
-  //   let translateY = 0;
-  //   if (this.state.currPlayer === -1) { //dealer
-  //     playerCards = this.state.dealerCards.slice(0);
-  //   } else { //player
-  //     playerCards = this.state.player1Cards.slice(0);
-  //     translateX = this.state.player1TranslateX - 90;
-  //     translateY = this.state.player1TranslateY -40;
-  //   }
-
-  //   let deck = this.state.deck.slice(0);
-  //   playerCards.push(deck.pop());
-  //   this.setState({
-  //     [playerType] : playerCards,
-  //     [playerTranslateX] : translateX,
-  //     [playerTranslateY] : translateY,
-  //     deck
-  //   });
-  // }
 
   //split hands
   //double down hands (any hand, but can't hit again after double)
@@ -105,16 +83,41 @@ class App extends React.Component {
   //soft hands (ace hands)
   //maybe look at wizard of odds, 
   handleHandPossibilities() {
-    // if ()
+    let currHand = this.playersCards[this.state.currPlayer[0]][this.state.currPlayer[1]];
+    if (currHand.length === 2 && currHand[0] === currHand[1]) {
+
+      //activate ability to split cards
+    }
+    //handle soft hands (hands with one ace and another card)
+
+  }
+
+  doubleDown() {
+    this.dealCard();
+    this.completeTurn();
+  }
+
+  splitHand() {
+    // currPlayer: [0,0],
+    // playersCards: [[[]]],
+    let currHand = this.state.playersCards[this.state.currPlayer[0]][this.state.currPlayer[1]];
+    let splitHand = [currHand.pop()];
+
+    let playersCards = this.state.playersCards.slice(0);
+    playersCards[this.state.currPlayer[0]][this.state.currPlayer[1]] = currHand;
+    playersCards[this.state.currPlayer[0]].push(splitHand);
+
+    this.setState({
+      playersCards
+    }, () => console.log(this.state.playersCards));
+  }
+
+  softHand() {
+
   }
   
 
   completeTurn() {
-
-    // currPlayer: [0,0],
-    // playersCards: [[]],
-
-    // debugger;
     let currPlayer;
     if(this.state.currPlayer === -1) { //dealer
       currPlayer = [0,0]; //need to change so it ends the round.
@@ -196,25 +199,45 @@ class App extends React.Component {
         </div>
         <div className="Cards PlayerCards">
           {this.state.currPlayer === -1 
-            ? this.state.playersCards[0][0].map((card, key) => <Card card={card}
-                                                    key={key} 
-                                                    index={key} 
-                                                    currPlayer={this.state.currPlayer}
-                                                    playerTranslateX={this.state.playerXTranslations[0][0]}
-                                                    playerTranslateY={this.state.playerYTranslations[0][0]}/>) 
-            : this.state.playersCards[0][0].map((card, key) => <Card card={card}
-                                                    key={key} 
-                                                    index={key} 
-                                                    currPlayer={this.state.currPlayer}
-                                                    playerTranslateX={this.state.playerXTranslations[this.state.currPlayer[0]][this.state.currPlayer[1]]}
-                                                    playerTranslateY={this.state.playerYTranslations[this.state.currPlayer[0]][this.state.currPlayer[1]]}/>)
+            ? this.state.playersCards[0].map((player) =>  {
+              if(player.length > 0) {
+                console.log('player is here');
+                console.log(player);
+                return player.map((card, key) => <Card card={card}
+                                                key={key} 
+                                                index={key} 
+                                                currPlayer={this.state.currPlayer}
+                                                playerTranslateX={this.state.playerXTranslations[0][0]}
+                                                playerTranslateY={this.state.playerYTranslations[0][0]}/>)
+              }
+            })
+            : this.state.playersCards[0].map((player) =>  {
+              if(player.length > 0) {
+                console.log('player is here');
+                console.log(player);
+                return player.map((card, key) => <Card card={card}
+                                                key={key} 
+                                                index={key} 
+                                                currPlayer={this.state.currPlayer}
+                                                playerTranslateX={this.state.playerXTranslations[this.state.currPlayer[0]][this.state.currPlayer[1]]}
+                                                playerTranslateY={this.state.playerYTranslations[this.state.currPlayer[0]][this.state.currPlayer[1]]}/>)
+              }
+            })
           }
         </div>
-        <div>
-          <button id="hit" onClick={this.dealCard}>hit</button>
-        </div>
-        <div>
-          <button id="stay" onClick={this.completeTurn}>Stay</button>
+        <div className="buttons">
+          <div>
+            <button id="hit" onClick={this.dealCard}>hit</button>
+          </div>
+          <div>
+            <button id="stay" onClick={this.completeTurn}>Stay</button>
+          </div>
+          <div>
+            <button id="doubleDown" onClick={this.doubleDown}>Double Down</button>
+          </div>
+          <div>
+            <button id="split" style={{visibility: this.state.splitButtonStatus}} onClick={this.splitHand}>Split</button>
+          </div>
         </div>
       </div>
     );
