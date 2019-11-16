@@ -11,7 +11,7 @@ class Card extends React.Component {
   render() {
     return (
       <div className={'card'} id={'card' + this.props.index} style={{transform: `translateX(${this.player1TranslateX}px) translateY(${this.player1TranslateY}px)`}}>
-        <img className="cardSVG" src={'./styles/images/cards/' + this.props.card + '.svg'}/>
+        <img className="cardSVG" src={'./styles/images/cards/' + this.props.card[0] + '.svg'}/>
       </div>
     );
   }

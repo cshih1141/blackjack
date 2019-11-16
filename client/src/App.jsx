@@ -1,7 +1,9 @@
 import React from 'react';
 import Card from './Card';
 
-//add in num decks and use random shuffle. remove decks from shoe when dealing
+//TODO: update deck to take in x cards (6 deck 8 deck, double deck)
+//display wizard of odds table
+//maybe pop up per hand to show ideal thing.
 //write down different situations - split hands, double down hands etc
 class App extends React.Component {
   constructor(props) {
@@ -23,6 +25,7 @@ class App extends React.Component {
     this.dealCard = this.dealCard.bind(this);
     this.getRandomCard = this.getRandomCard.bind(this);
     this.shuffleDeck = this.shuffleDeck.bind(this);
+    this.handleHandPossibilities = this.handleHandPossibilities.bind(this);
   }
 
 
@@ -55,6 +58,14 @@ class App extends React.Component {
     });
   }
 
+  //split hands
+  //double down hands (any hand, but can't hit again after double)
+  //two aces can only get one card each on split
+  //soft hands (ace hands)
+  //maybe look at wizard of odds, 
+  handleHandPossibilities() {
+
+  }
   
 
   completeTurn() {
@@ -87,19 +98,26 @@ class App extends React.Component {
     return deck;
   };
 
-  createDeck() {
+  createDeck(numDecks) {
     let deck = [];
     for(let i = 0; i < this.state.suits.length; i++) {
       for (let j = 0; j < this.state.cardNumber.length; j++) {
-        deck.push(this.state.cardNumber[j] + this.state.suits[i]);
+        deck.push([this.state.cardNumber[j] + this.state.suits[i], this.state.cardNumber[j]]);
       }
     }
+
+    let totalDecks = [];
+    for (let i = 0; i < 6; i++) {
+      totalDecks = totalDecks.concat(deck);
+    }
+
+    deck = totalDecks;
 
     this.shuffleDeck(deck);
 
     this.setState({
       deck
-    });
+    }, () => console.log(deck));
   }
 
   componentDidMount() {

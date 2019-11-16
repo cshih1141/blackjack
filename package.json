@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon ./server/server.js",
-    "react-dev": "webpack -w"
+    "react-dev": "webpack -w",
+    "runTest": "node ./test.js"
   },
   "author": "",
   "license": "ISC",
@@ -22,7 +23,9 @@
     "webpack-cli": "^3.3.9"
   },
   "dependencies": {
+    "bluebird": "^3.7.1",
     "cardsJS": "^1.1.1",
+    "cassandra-driver": "^4.3.1",
     "react-svg-loader": "^3.0.3"
   }
 }
