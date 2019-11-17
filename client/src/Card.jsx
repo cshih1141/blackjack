@@ -4,16 +4,25 @@ class Card extends React.Component {
   constructor(props) {
     super(props);
 
-    this.playerTranslateX = this.props.playerTranslateX;
-    this.playerTranslateY = this.props.playerTranslateY;
+    // this.playerTranslateX = this.props.playerTranslateX;
+    // this.playerTranslateY = this.props.playerTranslateY;
   }
 
   render() {
-    return (
-      <div className={'card'} id={'card' + this.props.index} style={{transform: `translateX(${this.playerTranslateX}px) translateY(${this.playerTranslateY}px)`}}>
-        <img className="cardSVG" src={'./styles/images/cards/' + this.props.card[0] + '.svg'}/>
-      </div>
-    );
+    if(this.props.currPlayer === -1) {
+      return (<div className={'card'} id={'card' + this.props.index}>
+                <img className="cardSVG" src={'./styles/images/cards/' + this.props.card[0] + '.svg'}/>
+              </div>
+      );
+    } else {
+      return (
+        <div className={'card'} id={'card' + this.props.index} 
+          style={{left: `${this.props.playerTranslateX[this.props.currPlayer][this.props.currPlayerIndex][this.props.index]}px`, 
+                  top: `${this.props.playerTranslateY[this.props.currPlayer][this.props.currPlayerIndex][this.props.index]}px`}}>
+          <img className="cardSVG" src={'./styles/images/cards/' + this.props.card[0] + '.svg'}/>
+        </div>
+      );
+    }
   }
 }
 

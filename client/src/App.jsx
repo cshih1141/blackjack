@@ -14,10 +14,10 @@ class App extends React.Component {
       cardNumber: ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'],
       deck: [],
       currPlayer: [0,0],
-      playersCards: [[[]]],
+      playersCards: [ [[]] ],
       dealerCards: [],
-      playerXTranslations:[[[80]]],
-      playerYTranslations:[[[0]]],
+      playerXTranslations:[ [[-10]] ],
+      playerYTranslations:[ [[-40]] ],
       splitButtonStatus: 'visible'
     }
 
@@ -43,12 +43,16 @@ class App extends React.Component {
     let playerCards;
     let translateX;
     let translateY;
+    let translateXsecondHand;
+    let translateYsecondHand;
     if (this.state.currPlayer === -1) { //dealer
       playerCards = this.state.dealerCards.slice(0);
     } else { //player
       playerCards = this.state.playersCards[this.state.currPlayer[0]][this.state.currPlayer[1]].slice(0);
-      translateX = this.state.playerXTranslations[this.state.currPlayer[0]][this.state.currPlayer[1]] - 90;
-      translateY = this.state.playerYTranslations[this.state.currPlayer[0]][this.state.currPlayer[1]] - 40;
+      let translateXlength = this.state.playerXTranslations[this.state.currPlayer[0]][this.state.currPlayer[1]].length;
+      let translateYlength = this.state.playerYTranslations[this.state.currPlayer[0]][this.state.currPlayer[1]].length;
+      translateX = this.state.playerXTranslations[this.state.currPlayer[0]][this.state.currPlayer[1]][translateXlength - 1] - 90;
+      translateY = this.state.playerYTranslations[this.state.currPlayer[0]][this.state.currPlayer[1]][translateYlength - 1] - 40;
     }
 
     let deck = this.state.deck.slice(0);
@@ -65,8 +69,11 @@ class App extends React.Component {
 
       let playerXTranslations = this.state.playerXTranslations.slice(0);
       let playerYTranslations = this.state.playerYTranslations.slice(0);
-      playerXTranslations[this.state.currPlayer[0]][this.state.currPlayer[1]] = translateX;
-      playerYTranslations[this.state.currPlayer[0]][this.state.currPlayer[1]] = translateY;
+      playerXTranslations[this.state.currPlayer[0]][this.state.currPlayer[1]].push(translateX);
+      playerYTranslations[this.state.currPlayer[0]][this.state.currPlayer[1]].push(translateY);
+      if(playerXTranslations[this.state.currPlayer[0]][this.state.currPlayer[1] + 1]) {
+        playerXTranslations[this.state.currPlayer[0]][this.state.currPlayer[1] + 1][0] -= 90
+      }
   
       this.setState({
         playersCards,
@@ -97,6 +104,7 @@ class App extends React.Component {
     this.completeTurn();
   }
 
+  //on split, need to shift the card on the right over by -90 ever hit
   splitHand() {
     // currPlayer: [0,0],
     // playersCards: [[[]]],
@@ -107,9 +115,22 @@ class App extends React.Component {
     playersCards[this.state.currPlayer[0]][this.state.currPlayer[1]] = currHand;
     playersCards[this.state.currPlayer[0]].push(splitHand);
 
+
+
+    let playerXTranslations = this.state.playerXTranslations.slice(0);
+    let playerYTranslations = this.state.playerYTranslations.slice(0);
+    let startingPosition = this.state.playerXTranslations[this.state.currPlayer[0]][this.state.currPlayer[1]][0] + 80;
+    playerXTranslations[this.state.currPlayer[0]].push([startingPosition]);
+    playerYTranslations[this.state.currPlayer[0]].push([-40]);
+
     this.setState({
-      playersCards
-    }, () => console.log(this.state.playersCards));
+      playersCards,
+      playerXTranslations,
+      playerYTranslations,
+    }, () => {
+      console.log(this.state.playersCards);
+      console.log(this.state.playerXTranslations)
+    });
   }
 
   softHand() {
@@ -181,7 +202,7 @@ class App extends React.Component {
 
     this.setState({
       deck
-    }, () => console.log(deck));
+    });
   }
 
   componentDidMount() {
@@ -198,44 +219,31 @@ class App extends React.Component {
                                                     currPlayer={this.state.currPlayer}/>)}
         </div>
         <div className="Cards PlayerCards">
-          {this.state.currPlayer === -1 
-            ? this.state.playersCards[0].map((player) =>  {
+          {this.state.playersCards[0].map((player, currPlayerIndex) =>  {
               if(player.length > 0) {
-                console.log('player is here');
-                console.log(player);
                 return player.map((card, key) => <Card card={card}
                                                 key={key} 
                                                 index={key} 
                                                 currPlayer={this.state.currPlayer}
-                                                playerTranslateX={this.state.playerXTranslations[0][0]}
-                                                playerTranslateY={this.state.playerYTranslations[0][0]}/>)
-              }
-            })
-            : this.state.playersCards[0].map((player) =>  {
-              if(player.length > 0) {
-                console.log('player is here');
-                console.log(player);
-                return player.map((card, key) => <Card card={card}
-                                                key={key} 
-                                                index={key} 
-                                                currPlayer={this.state.currPlayer}
-                                                playerTranslateX={this.state.playerXTranslations[this.state.currPlayer[0]][this.state.currPlayer[1]]}
-                                                playerTranslateY={this.state.playerYTranslations[this.state.currPlayer[0]][this.state.currPlayer[1]]}/>)
+                                                playerTranslateX={this.state.playerXTranslations}
+                                                playerTranslateY={this.state.playerYTranslations}
+                                                currPlayer={0}
+                                                currPlayerIndex={currPlayerIndex}/>)
               }
             })
           }
         </div>
         <div className="buttons">
-          <div>
+          <div className="buttonContainer">
             <button id="hit" onClick={this.dealCard}>hit</button>
           </div>
-          <div>
+          <div className="buttonContainer">
             <button id="stay" onClick={this.completeTurn}>Stay</button>
           </div>
-          <div>
+          <div className="buttonContainer">
             <button id="doubleDown" onClick={this.doubleDown}>Double Down</button>
           </div>
-          <div>
+          <div className="buttonContainer">
             <button id="split" style={{visibility: this.state.splitButtonStatus}} onClick={this.splitHand}>Split</button>
           </div>
         </div>

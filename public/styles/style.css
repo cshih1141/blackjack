@@ -9,14 +9,16 @@
 .Cards {
   display:flex;
 }
-
+.card {
+  position: relative;
+  background:transparent;
+}
 .DealerCards {
   justify-content: center;
 }
 
 .PlayerCards {
   justify-content: center;
-
   position: absolute;
   bottom: 150px;
   left: 40%;
@@ -69,6 +71,9 @@
   border-style: solid;
 }
 
+.buttonContainer {
+  background:transparent;
+}
 /* #hit {
   bottom: 60px;
 
