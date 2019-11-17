@@ -18,7 +18,8 @@ class App extends React.Component {
       dealerCards: [],
       playerXTranslations:[ [[-10]] ],
       playerYTranslations:[ [[-40]] ],
-      splitButtonStatus: 'visible'
+      splitButtonStatus: 'hidden', //visible
+      splitIsDisabled: true, //false
     }
 
     this.createDeck = this.createDeck.bind(this);
@@ -79,7 +80,7 @@ class App extends React.Component {
         playerXTranslations,
         playerYTranslations,
         deck
-      });
+      }, this.handleHandPossibilities);
     }
   }
 
@@ -98,14 +99,22 @@ class App extends React.Component {
   //two aces can only get one card each on split
   //soft hands (ace hands)
   //maybe look at wizard of odds, 
-  handleHandPossibilities() {
-    let currHand = this.playersCards[this.state.currPlayer[0]][this.state.currPlayer[1]];
-    if (currHand.length === 2 && currHand[0] === currHand[1]) {
 
-      //activate ability to split cards
+  //TODO: need to fix splits. not activating with two of the same card.
+  //cahnge deck to only output the same card and test
+  handleHandPossibilities() {
+    // debugger;
+    let currHand = this.state.playersCards[this.state.currPlayer[0]][this.state.currPlayer[1]];
+    if (currHand.length === 2 && currHand[0][1] === currHand[1][1]) {
+      let splitButtonStatus = 'hidden';
+      let splitIsDisabled = true;
+
+      this.setState({
+        splitButtonStatus,
+        splitIsDisabled
+      });
     }
     //handle soft hands (hands with one ace and another card)
-
   }
 
   doubleDown() {
@@ -252,7 +261,7 @@ class App extends React.Component {
             <button id="doubleDown" onClick={this.doubleDown}>Double Down</button>
           </div>
           <div className="buttonContainer">
-            <button id="split" style={{visibility: this.state.splitButtonStatus}} onClick={this.splitHand}>Split</button>
+            <button id="split" style={{visibility: this.state.splitButtonStatus}} disabled={this.state.splitIsDisabled} onClick={this.splitHand}>Split</button>
           </div>
         </div>
       </div>
