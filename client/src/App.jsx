@@ -30,6 +30,7 @@ class App extends React.Component {
     this.doubleDown = this.doubleDown.bind(this);
     this.splitHand = this.splitHand.bind(this);
     this.softHand = this.softHand.bind(this);
+    this.resetTable = this.resetTable.bind(this);
   }
 
 
@@ -39,12 +40,10 @@ class App extends React.Component {
   //TODO: end the shoe when there's only x% left.
   //possibly chance currPlayer to indexes of 2d array. first index is player, which player hand (if split)
   dealCard() {
-    // debugger;
+    debugger;
     let playerCards;
     let translateX;
     let translateY;
-    let translateXsecondHand;
-    let translateYsecondHand;
     if (this.state.currPlayer === -1) { //dealer
       playerCards = this.state.dealerCards.slice(0);
     } else { //player
@@ -82,6 +81,16 @@ class App extends React.Component {
         deck
       });
     }
+  }
+
+  resetTable() {
+    this.setState({
+      currPlayer : [0, 0],
+      playersCards: [ [[]] ],
+      dealerCards: [],
+      playerXTranslations:[ [[-10]] ],
+      playerYTranslations:[ [[-40]] ],
+    });
   }
 
   //split hands
@@ -141,7 +150,7 @@ class App extends React.Component {
   completeTurn() {
     let currPlayer;
     if(this.state.currPlayer === -1) { //dealer
-      currPlayer = [0,0]; //need to change so it ends the round.
+      this.resetTable();
     } else {
       currPlayer = this.state.currPlayer.slice(0);
       if(this.state.playersCards[currPlayer[0]][currPlayer[1] + 1]) {
@@ -151,11 +160,10 @@ class App extends React.Component {
       } else {
         currPlayer = [currPlayer[0] + 1, 0];
       }
+      this.setState({
+        currPlayer
+      }, () => console.log(this.state.currPlayer));
     }
-
-    this.setState({
-      currPlayer
-    }, () => console.log(this.state.currPlayer));
   }
 
   getRandomCard(min, max) {
