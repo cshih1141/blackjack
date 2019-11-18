@@ -168,17 +168,23 @@ class App extends React.Component {
   
 
   //TODO: trigger this automatically when dealer turn
-  //TODO: handle when dealer busts, add end turn functionality
+  //TODO: handle when dealer busts, add end turn functionality. 
   handleDealerHand() {
     let currTotals = this.calculateHandTotal(this.state.dealerCards, false);
     //if there is a number is 17 or higher, stay
     if (currTotals.length > 1) {
-      if (currTotals[0] >= 17 || currTotals[1] >= 17) {
-        console.log('DEALER HAS ' + Math.max(currTotals[0], currTotals[1]) + '. DEALER STAYS');
+      if ((currTotals[0] >= 17 && currTotals[0] <= 21) || (currTotals[1] >= 17 && currTotals[1] <= 21)) {
+        let total;
+        if(currTotals[0] >= 17 && currTotals[0] <= 21) {
+          total = currTotals[0];
+        } else {
+          total = currTotals[1];
+        }
+        console.log('DEALER HAS ' + total + '. DEALER STAYS');
         //END DEALER TURN
       } 
     } else {
-      if(currTotals[0] >= 17) {
+      if(currTotals[0] >= 17 && currTotals[0] <= 21) {
         console.log('DEALER HAS ' + currTotals[0] + '. DEALER STAYS');
         //END DEALER TURN
       }
