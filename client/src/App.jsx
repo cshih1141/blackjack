@@ -32,6 +32,7 @@ class App extends React.Component {
     this.splitHand = this.splitHand.bind(this);
     this.softHand = this.softHand.bind(this);
     this.resetTable = this.resetTable.bind(this);
+    this.disableSplit = this.disableSplit.bind(this);
   }
 
 
@@ -41,7 +42,6 @@ class App extends React.Component {
   //TODO: end the shoe when there's only x% left.
   //possibly chance currPlayer to indexes of 2d array. first index is player, which player hand (if split)
   dealCard() {
-    debugger;
     let playerCards;
     let translateX;
     let translateY;
@@ -71,8 +71,14 @@ class App extends React.Component {
       let playerYTranslations = this.state.playerYTranslations.slice(0);
       playerXTranslations[this.state.currPlayer[0]][this.state.currPlayer[1]].push(translateX);
       playerYTranslations[this.state.currPlayer[0]][this.state.currPlayer[1]].push(translateY);
+      // for(let i = this.state.currPlayer[1] + 1; i < playerXTranslations[this.state.currPlayer[0]].length; i++) {
+      //   playerXTranslations[this.state.currPlayer[0]][i][0] -= 90;
+      // }
       if(playerXTranslations[this.state.currPlayer[0]][this.state.currPlayer[1] + 1]) {
-        playerXTranslations[this.state.currPlayer[0]][this.state.currPlayer[1] + 1][0] -= 90
+        for(let i = this.state.currPlayer[1] + 1; i < playerXTranslations[this.state.currPlayer[0]].length; i++) {
+          playerXTranslations[this.state.currPlayer[0]][i][0] -= 90;
+        }
+        // playerXTranslations[this.state.currPlayer[0]][this.state.currPlayer[1] + 1][0] -= 90
       }
   
       this.setState({
@@ -103,16 +109,17 @@ class App extends React.Component {
   //TODO: need to fix splits. not activating with two of the same card.
   //cahnge deck to only output the same card and test
   handleHandPossibilities() {
-    // debugger;
     let currHand = this.state.playersCards[this.state.currPlayer[0]][this.state.currPlayer[1]];
     if (currHand.length === 2 && currHand[0][1] === currHand[1][1]) {
-      let splitButtonStatus = 'hidden';
-      let splitIsDisabled = true;
+      let splitButtonStatus = 'visible';
+      let splitIsDisabled = false;
 
       this.setState({
         splitButtonStatus,
         splitIsDisabled
-      });
+      }, () => console.log(this.state));
+    } else {
+      this.disableSplit();
     }
     //handle soft hands (hands with one ace and another card)
   }
@@ -137,7 +144,10 @@ class App extends React.Component {
 
     let playerXTranslations = this.state.playerXTranslations.slice(0);
     let playerYTranslations = this.state.playerYTranslations.slice(0);
-    let startingPosition = this.state.playerXTranslations[this.state.currPlayer[0]][this.state.currPlayer[1]][0] + 80;
+    // let totalCurrHandsIndex = playersCards[this.state.currPlayer[0]].length - 2; //minus two to account for the newly added card
+    // let startingPosition = this.state.playerXTranslations[this.state.currPlayer[0]][this.state.currPlayer[totalCurrHandsIndex]][0] + 80;
+    let totalCurrHandsIndex = playersCards[this.state.currPlayer[0]].length - 2; //minus two to account for the newly added card
+    let startingPosition = this.state.playerXTranslations[this.state.currPlayer[0]][totalCurrHandsIndex][0] + 80;
     playerXTranslations[this.state.currPlayer[0]].push([startingPosition]);
     playerYTranslations[this.state.currPlayer[0]].push([-40]);
 
@@ -145,6 +155,8 @@ class App extends React.Component {
       playersCards,
       playerXTranslations,
       playerYTranslations,
+      splitButtonStatus : 'hidden',
+      splitIsDisabled : true,
     }, () => {
       console.log(this.state.playersCards);
       console.log(this.state.playerXTranslations)
@@ -155,6 +167,15 @@ class App extends React.Component {
 
   }
   
+  disableSplit() {
+    let splitButtonStatus = 'hidden';
+    let splitIsDisabled = true;
+
+    this.setState({
+      splitButtonStatus,
+      splitIsDisabled
+    }, () => console.log(this.state));
+  }
 
   completeTurn() {
     let currPlayer;
@@ -204,7 +225,8 @@ class App extends React.Component {
         } else {
           cardNumber = Number(this.state.cardNumber[j]);
         }
-        deck.push([this.state.cardNumber[j] + this.state.suits[i], cardNumber]);
+        // deck.push([this.state.cardNumber[j] + this.state.suits[i], cardNumber]);
+        deck.push([10 + this.state.suits[i], 10]);
       }
     }
 
