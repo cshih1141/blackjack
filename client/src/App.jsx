@@ -30,9 +30,10 @@ class App extends React.Component {
     this.handleHandPossibilities = this.handleHandPossibilities.bind(this);
     this.doubleDown = this.doubleDown.bind(this);
     this.splitHand = this.splitHand.bind(this);
-    this.softHand = this.softHand.bind(this);
+    this.handleSoftHand = this.handleSoftHand.bind(this);
     this.resetTable = this.resetTable.bind(this);
     this.disableSplit = this.disableSplit.bind(this);
+    this.calculateHandTotal = this.calculateHandTotal.bind(this);
   }
 
 
@@ -41,7 +42,7 @@ class App extends React.Component {
   //change this to deal from deck instead of making a random card each time
   //TODO: end the shoe when there's only x% left.
   //possibly chance currPlayer to indexes of 2d array. first index is player, which player hand (if split)
-  dealCard() {
+  dealCard(isDoubleDown = false) {
     let playerCards;
     let translateX;
     let translateY;
@@ -62,7 +63,7 @@ class App extends React.Component {
       this.setState({
         dealerCards: playerCards,
         deck
-      });
+      }, () => this.calculateHandTotal(this.state.dealerCards, false));
     } else {
       let playersCards = this.state.playersCards.slice(0);
       playersCards[this.state.currPlayer[0]][this.state.currPlayer[1]] = playerCards;
@@ -71,14 +72,10 @@ class App extends React.Component {
       let playerYTranslations = this.state.playerYTranslations.slice(0);
       playerXTranslations[this.state.currPlayer[0]][this.state.currPlayer[1]].push(translateX);
       playerYTranslations[this.state.currPlayer[0]][this.state.currPlayer[1]].push(translateY);
-      // for(let i = this.state.currPlayer[1] + 1; i < playerXTranslations[this.state.currPlayer[0]].length; i++) {
-      //   playerXTranslations[this.state.currPlayer[0]][i][0] -= 90;
-      // }
       if(playerXTranslations[this.state.currPlayer[0]][this.state.currPlayer[1] + 1]) {
         for(let i = this.state.currPlayer[1] + 1; i < playerXTranslations[this.state.currPlayer[0]].length; i++) {
           playerXTranslations[this.state.currPlayer[0]][i][0] -= 90;
         }
-        // playerXTranslations[this.state.currPlayer[0]][this.state.currPlayer[1] + 1][0] -= 90
       }
   
       this.setState({
@@ -86,7 +83,7 @@ class App extends React.Component {
         playerXTranslations,
         playerYTranslations,
         deck
-      }, this.handleHandPossibilities);
+      }, () => this.handleHandPossibilities(isDoubleDown));
     }
   }
 
@@ -100,6 +97,62 @@ class App extends React.Component {
     });
   }
 
+
+  calculateHandTotal(currHand, isDoubleDown) {
+    //if total is 21 and currHand count is 2, pay out blackjack
+    if(currHand.length === 2 && currHand[0][1] + currHand[1][1] === 21) {
+      console.log('BLACKJACK');
+      //pay out 3 to 2
+    } else {
+      let currHandTotals = [0];
+      let isFirstAce = true;
+      for (let i = 0; i < currHand.length; i++) {
+        if(currHand[i][1] === 11) {
+          if(isFirstAce) {
+            currHandTotals.push(currHandTotals[0] + 1);
+            currHandTotals[0] += 11;
+            isFirstAce = false;
+          } else {
+            currHandTotals[0]++;
+            currHandTotals[1]++;
+          }
+        } else {
+          for (let j = 0; j < currHandTotals.length; j++) {
+            currHandTotals[j] += currHand[i][1];
+          }
+        }
+      }
+      if(currHandTotals.length > 1) {
+        if (currHandTotals[0] > 21 && currHandTotals[1] > 21) {
+          console.log('YOU BUSTED');
+          //deduct money then
+          this.completeTurn();
+        } else if (currHandTotals[0] === 21 || currHandTotals[1] === 21) {
+          console.log('YOU GOT 21');
+          this.completeTurn();
+        }
+      } else {
+        if (currHandTotals[0] > 21) {
+          console.log('YOU BUSTED');
+          //deduct money then
+          this.completeTurn();
+        } else if (currHandTotals[0] === 21) {
+          console.log('YOU GOT 21');
+          this.completeTurn();
+        }
+      }
+      console.log(currHandTotals);
+      if(isDoubleDown) {
+        this.completeTurn();
+      }
+    }
+
+    //if hand has an ace, have both totals with ace being 11 or 1
+
+    //else jsut add all numbers up.
+    //if over 21 then bust (completeHand)
+    
+  }
   //split hands
   //double down hands (any hand, but can't hit again after double)
   //two aces can only get one card each on split
@@ -108,7 +161,7 @@ class App extends React.Component {
 
   //TODO: need to fix splits. not activating with two of the same card.
   //cahnge deck to only output the same card and test
-  handleHandPossibilities() {
+  handleHandPossibilities(isDoubleDown) {
     let currHand = this.state.playersCards[this.state.currPlayer[0]][this.state.currPlayer[1]];
     if (currHand.length === 2 && currHand[0][1] === currHand[1][1]) {
       let splitButtonStatus = 'visible';
@@ -121,18 +174,18 @@ class App extends React.Component {
     } else {
       this.disableSplit();
     }
+    this.calculateHandTotal(currHand, isDoubleDown);
+    // if()
+    this.handleSoftHand(currHand);
     //handle soft hands (hands with one ace and another card)
   }
 
   doubleDown() {
-    this.dealCard();
-    this.completeTurn();
+    this.dealCard(true);
   }
 
-  //on split, need to shift the card on the right over by -90 ever hit
+  //TODO: need to fix multiple splits display and ordering
   splitHand() {
-    // currPlayer: [0,0],
-    // playersCards: [[[]]],
     let currHand = this.state.playersCards[this.state.currPlayer[0]][this.state.currPlayer[1]];
     let splitHand = [currHand.pop()];
 
@@ -144,8 +197,6 @@ class App extends React.Component {
 
     let playerXTranslations = this.state.playerXTranslations.slice(0);
     let playerYTranslations = this.state.playerYTranslations.slice(0);
-    // let totalCurrHandsIndex = playersCards[this.state.currPlayer[0]].length - 2; //minus two to account for the newly added card
-    // let startingPosition = this.state.playerXTranslations[this.state.currPlayer[0]][this.state.currPlayer[totalCurrHandsIndex]][0] + 80;
     let totalCurrHandsIndex = playersCards[this.state.currPlayer[0]].length - 2; //minus two to account for the newly added card
     let startingPosition = this.state.playerXTranslations[this.state.currPlayer[0]][totalCurrHandsIndex][0] + 80;
     playerXTranslations[this.state.currPlayer[0]].push([startingPosition]);
@@ -163,8 +214,8 @@ class App extends React.Component {
     });
   }
 
-  softHand() {
-
+  handleSoftHand(currHand) {
+    
   }
   
   disableSplit() {
@@ -218,15 +269,14 @@ class App extends React.Component {
     for(let i = 0; i < this.state.suits.length; i++) {
       for (let j = 0; j < this.state.cardNumber.length; j++) {
         let cardNumber;
-        if(this.state.cardNumber === 'A') {
+        if(this.state.cardNumber[j] === 'A') {
           cardNumber = 11
-        } else if (this.state.cardNumber === 'J' || this.state.cardNumber === 'Q' || this.state.cardNumber === 'K') {
+        } else if (this.state.cardNumber[j] === 'J' || this.state.cardNumber[j] === 'Q' || this.state.cardNumber[j] === 'K') {
           cardNumber = 10;
         } else {
           cardNumber = Number(this.state.cardNumber[j]);
         }
-        // deck.push([this.state.cardNumber[j] + this.state.suits[i], cardNumber]);
-        deck.push([10 + this.state.suits[i], 10]);
+        deck.push([this.state.cardNumber[j] + this.state.suits[i], cardNumber]);
       }
     }
 
@@ -274,7 +324,7 @@ class App extends React.Component {
         </div>
         <div className="buttons">
           <div className="buttonContainer">
-            <button id="hit" onClick={this.dealCard}>hit</button>
+            <button id="hit" onClick={() => this.dealCard(false)}>hit</button>
           </div>
           <div className="buttonContainer">
             <button id="stay" onClick={this.completeTurn}>Stay</button>
