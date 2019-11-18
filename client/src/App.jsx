@@ -34,6 +34,7 @@ class App extends React.Component {
     this.resetTable = this.resetTable.bind(this);
     this.disableSplit = this.disableSplit.bind(this);
     this.calculateHandTotal = this.calculateHandTotal.bind(this);
+    this.handleDealerHand = this.handleDealerHand.bind(this);
   }
 
 
@@ -63,7 +64,7 @@ class App extends React.Component {
       this.setState({
         dealerCards: playerCards,
         deck
-      }, () => this.calculateHandTotal(this.state.dealerCards, false));
+      }, this.handleDealerHand);
     } else {
       let playersCards = this.state.playersCards.slice(0);
       playersCards[this.state.currPlayer[0]][this.state.currPlayer[1]] = playerCards;
@@ -100,11 +101,12 @@ class App extends React.Component {
 
   calculateHandTotal(currHand, isDoubleDown) {
     //if total is 21 and currHand count is 2, pay out blackjack
+    let currHandTotals = [0];
     if(currHand.length === 2 && currHand[0][1] + currHand[1][1] === 21) {
       console.log('BLACKJACK');
+      // return 21; //TODO: move this to complete turn and store in state for player
       //pay out 3 to 2
     } else {
-      let currHandTotals = [0];
       let isFirstAce = true;
       for (let i = 0; i < currHand.length; i++) {
         if(currHand[i][1] === 11) {
@@ -127,32 +129,63 @@ class App extends React.Component {
           console.log('YOU BUSTED');
           //deduct money then
           this.completeTurn();
+          // return -1; //TODO: move this to complete turn and store in state for player
         } else if (currHandTotals[0] === 21 || currHandTotals[1] === 21) {
           console.log('YOU GOT 21');
           this.completeTurn();
+          // return 21; //TODO: move this to complete turn and store in state for player
         }
       } else {
         if (currHandTotals[0] > 21) {
           console.log('YOU BUSTED');
           //deduct money then
           this.completeTurn();
+          // return -1; //TODO: move this to complete turn and store in state for player
         } else if (currHandTotals[0] === 21) {
           console.log('YOU GOT 21');
           this.completeTurn();
+          // return 21; //TODO: move this to complete turn and store in state for player
         }
       }
       console.log(currHandTotals);
       if(isDoubleDown) {
         this.completeTurn();
+        //TODO: move this to complete turn and store in state for player
+        // if(currHandTotals.length > 1) {
+        //   if(currHandTotals[0] <= 21 && currHandTotals[1] <= 21) {
+        //     return Math.max(currHandTotals[0], currHandTotals[1]);
+        //   } else {
+        //     return Math.min(currHandTotals[0], currHandTotals[1]);
+        //   }
+        // } else {
+        //   return currHandTotals[0];
+        // }
+      }
+    }    
+    return currHandTotals;
+  }
+
+  
+
+  //TODO: trigger this automatically when dealer turn
+  //TODO: handle when dealer busts, add end turn functionality
+  handleDealerHand() {
+    let currTotals = this.calculateHandTotal(this.state.dealerCards, false);
+    //if there is a number is 17 or higher, stay
+    if (currTotals.length > 1) {
+      if (currTotals[0] >= 17 || currTotals[1] >= 17) {
+        console.log('DEALER HAS ' + Math.max(currTotals[0], currTotals[1]) + '. DEALER STAYS');
+        //END DEALER TURN
+      } 
+    } else {
+      if(currTotals[0] >= 17) {
+        console.log('DEALER HAS ' + currTotals[0] + '. DEALER STAYS');
+        //END DEALER TURN
       }
     }
-
-    //if hand has an ace, have both totals with ace being 11 or 1
-
-    //else jsut add all numbers up.
-    //if over 21 then bust (completeHand)
-    
+    console.log('this is curr totals ' + JSON.stringify(currTotals));
   }
+
   //split hands
   //double down hands (any hand, but can't hit again after double)
   //two aces can only get one card each on split
