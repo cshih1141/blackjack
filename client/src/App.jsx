@@ -325,6 +325,20 @@ class App extends React.Component {
   }
 
   resetTable() {
+    let readyButton = this.state.readyButton;
+    let readyButtonDisabled = this.state.readyButtonDisabled;
+    let readyButton2 = this.state.readyButton2;
+    let readyButtonDisabled2 = this.state.readyButtonDisabled2;
+
+    if (this.state.playerNum === Number(this.state.joinBelongsTo)) {
+      readyButton = 'visible';
+      readyButtonDisabled = false;
+    }
+    if (this.state.playerNum === Number(this.state.joinBelongsTo2)) {
+      readyButton2 = 'visible';
+      readyButtonDisabled2 = false;
+    }
+
     this.setState({
       currPlayer : [0, 0],
       playersCards: [ [[]], [[]] ],
@@ -339,10 +353,10 @@ class App extends React.Component {
       splitIsDisabled: true, //false
       splitButtonStatus2: 'hidden', //visible
       splitIsDisabled2: true, //false
-      readyButton : 'visible',
-      readyButtonDisabled : false,
-      readyButton2 : 'visible',
-      readyButtonDisabled2 : false,
+      readyButton,
+      readyButtonDisabled,
+      readyButton2,
+      readyButtonDisabled2,
       readyPlayer1 : false,
       readyPlayer2 : false,
     });
