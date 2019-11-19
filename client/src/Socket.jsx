@@ -14,7 +14,6 @@ function subscribeToGameDetails(cb) {
 }
 
 function updateGameStatus(gameUpdates) {
-  gameUpdates = 'dealCard';
   socket.emit('gameUpdates', { gameUpdates })
 }
 

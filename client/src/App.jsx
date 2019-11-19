@@ -20,8 +20,18 @@ class App extends React.Component {
     });
 
     subscribeToGameDetails((err, data) =>{
-      if (data.gameUpdates === 'dealCard') {
-        console.log('dealing card');
+      if (data.gameUpdates === '1' || data.gameUpdates === '2') {
+        console.log('joining game ' + data.gameUpdates);
+      } else if (data.gameUpdates === 'readyPlayer1' || data.gameUpdates === 'readyPlayer2') {
+        console.log('readyUp ' + data.gameUpdates);
+      } else if (data.gameUpdates === 'dealCard') {
+        console.log('dealCard');
+      } else if (data.gameUpdates === 'completeTurn') {
+        console.log('completeTurn');
+      } else if (data.gameUpdates === 'doubleDown') {
+        console.log('doubleDown');
+      } else if (data.gameUpdates === 'split') {
+        console.log('split');
       }
     });
 
@@ -77,6 +87,7 @@ class App extends React.Component {
   }
 
   joinGame(player) {
+    updateGameStatus(player);
     let readyButton;
     let readyButtonDisabled;
     let hasPlayer;
@@ -109,6 +120,7 @@ class App extends React.Component {
   }
 
   readyUp(player) {
+    updateGameStatus(player);
     let readyPlayer = player;
     let readyButton;
     let readyButtonDisabled;
@@ -123,7 +135,9 @@ class App extends React.Component {
       [readyPlayer] : true,
       [readyButton] : 'hidden',
       [readyButtonDisabled] : true,
-    }, this.startRound)
+    }, () => {
+      this.startRound();
+    })
   }
 
   //todo: add a button that starts the round
@@ -206,6 +220,7 @@ class App extends React.Component {
   //TODO: end the shoe when there's only x% left.
   //possibly chance currPlayer to indexes of 2d array. first index is player, which player hand (if split)
   dealCard(isDoubleDown = false) {
+    updateGameStatus('dealCard');
     let playerCards;
     let translateX;
     let translateY;
@@ -441,11 +456,13 @@ class App extends React.Component {
   }
 
   doubleDown() {
+    updateGameStatus('doubleDown');
     this.dealCard(true);
   }
 
   //TODO: need to fix multiple splits display and ordering
   splitHand() {
+    updateGameStatus('split');
     let currHand = this.state.playersCards[this.state.currPlayer[0]][this.state.currPlayer[1]];
     let splitHand = [currHand.pop()];
 
@@ -501,6 +518,7 @@ class App extends React.Component {
   }
 
   completeTurn() {
+    updateGameStatus('completeTurn');
     let currPlayer;
     let normalPlayButtons;
     let normalPlayButtonsIsDisabled;
@@ -628,7 +646,6 @@ class App extends React.Component {
 
   componentDidMount() {
     this.createDeck();
-    updateGameStatus();
   }
 
   render() {
