@@ -2,6 +2,7 @@ import React from 'react';
 import Card from './Card';
 import DealerCards from './DealerCards';
 const Promise = require('bluebird');
+import { subscribeToGameDetails } from './Socket';
 
 //TODO: update deck to take in x cards (6 deck 8 deck, double deck)
 //display wizard of odds table
@@ -10,6 +11,13 @@ const Promise = require('bluebird');
 class App extends React.Component {
   constructor(props) {
     super(props);
+
+    subscribeToGameDetails((err, data) => {
+      let playerNum = data.player;
+      this.setState({ 
+        playerNum 
+      }, () => console.log(this.state.playerNum)) 
+    });
 
     this.state = {
       suits: ['C', 'D', 'H', 'S'],
@@ -40,6 +48,7 @@ class App extends React.Component {
       joinButtonDisabled : false,
       joinButton2 : 'visible',
       joinButtonDisabled2 : false,
+      playerNum : null,
     }
 
     this.createDeck = this.createDeck.bind(this);
