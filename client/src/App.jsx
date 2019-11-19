@@ -24,11 +24,20 @@ class App extends React.Component {
       normalPlayButtonsIsDisabled : true,
       splitButtonStatus: 'hidden', //visible
       splitIsDisabled: true, //false
-      
       normalPlayButtons2: 'hidden',
       normalPlayButtonsIsDisabled2 : true,
       splitButtonStatus2: 'hidden', //visible
       splitIsDisabled2: true, //false
+      hasPlayer1 : false,
+      hasPlayer2 : false,
+      readyButton : 'hidden',
+      readyButtonDisabled : true,
+      readyButton2 : 'hidden',
+      readyButtonDisabled2 : true,
+      joinButton : 'visible',
+      joinButtonDisabled : false,
+      joinButton2 : 'visible',
+      joinButtonDisabled2 : false,
     }
 
     this.createDeck = this.createDeck.bind(this);
@@ -46,75 +55,110 @@ class App extends React.Component {
     this.handleDealerHand = this.handleDealerHand.bind(this);
     this.startRound = this.startRound.bind(this);
     this.timeout = this.timeout.bind(this);
+    this.joinGame = this.joinGame.bind(this);
+  }
+
+  joinGame(player) {
+    let readyButton;
+    let readyButtonDisabled;
+    let hasPlayer;
+    let joinButton = this.state.joinButton;
+    let joinButtonDisabled = this.state.joinButtonDisabled;
+    let joinButton2 = this.state.joinButton2;
+    let joinButtonDisabled2 = this.state.joinButtonDisabled2;
+    if(player === '1') {
+      readyButton = 'readyButton';
+      readyButtonDisabled = 'readyButtonDisabled';
+      hasPlayer = 'hasPlayer1';
+      joinButton = 'hidden';
+      joinButtonDisabled = true;
+    } else {
+      readyButton = 'readyButton2';
+      readyButtonDisabled = 'readyButtonDisabled2';
+      hasPlayer = 'hasPlayer2';
+      joinButton2 = 'hidden';
+      joinButtonDisabled2 = true;
+    }
+    this.setState({
+      [readyButton] : 'visible',
+      [readyButtonDisabled] : false,
+      [hasPlayer] : true,
+      joinButton,
+      joinButtonDisabled,
+      joinButton2,
+      joinButtonDisabled2,
+    });
   }
 
   //todo: add a button that starts the round
   startRound() {
-    let playerCards;
-    let translateX;
-    let translateY;
-    let currPlayer = this.state.currPlayer;
-    let playerXTranslations = JSON.parse(JSON.stringify(this.state.playerXTranslations.slice(0)));
-    let playerYTranslations = JSON.parse(JSON.stringify(this.state.playerYTranslations.slice(0)));
-    let dealerCards = JSON.parse(JSON.stringify(this.state.dealerCards.slice(0)));
-    let playersCards = JSON.parse(JSON.stringify(this.state.playersCards.slice(0)));
-    let deck = JSON.parse(JSON.stringify(this.state.deck.slice(0)));
-    for (let i = 0; i < 2; i++) {
-      for (let j = 0; j < this.state.playersCards.length; j++) {
-        currPlayer = [j,0];
-        playerCards = playersCards[currPlayer[0]][currPlayer[1]].slice(0);;
-        let translateXlength = playerXTranslations[currPlayer[0]][currPlayer[1]].length;
-        let translateYlength = playerYTranslations[currPlayer[0]][currPlayer[1]].length;
-        translateX = playerXTranslations[currPlayer[0]][currPlayer[1]][translateXlength - 1] - 90;
-        translateY = playerYTranslations[currPlayer[0]][currPlayer[1]][translateYlength - 1] - 40;
-
-        playerCards.push(deck.pop());
-    
-        playersCards[currPlayer[0]][currPlayer[1]] = playerCards;
+    if(this.state.hasPlayer1 && this.state.hasPlayer2) {
+      let playerCards;
+      let translateX;
+      let translateY;
+      let currPlayer = this.state.currPlayer;
+      let playerXTranslations = JSON.parse(JSON.stringify(this.state.playerXTranslations.slice(0)));
+      let playerYTranslations = JSON.parse(JSON.stringify(this.state.playerYTranslations.slice(0)));
+      let dealerCards = JSON.parse(JSON.stringify(this.state.dealerCards.slice(0)));
+      let playersCards = JSON.parse(JSON.stringify(this.state.playersCards.slice(0)));
+      let deck = JSON.parse(JSON.stringify(this.state.deck.slice(0)));
+      for (let i = 0; i < 2; i++) {
+        for (let j = 0; j < this.state.playersCards.length; j++) {
+          currPlayer = [j,0];
+          playerCards = playersCards[currPlayer[0]][currPlayer[1]].slice(0);;
+          let translateXlength = playerXTranslations[currPlayer[0]][currPlayer[1]].length;
+          let translateYlength = playerYTranslations[currPlayer[0]][currPlayer[1]].length;
+          translateX = playerXTranslations[currPlayer[0]][currPlayer[1]][translateXlength - 1] - 90;
+          translateY = playerYTranslations[currPlayer[0]][currPlayer[1]][translateYlength - 1] - 40;
   
-        playerXTranslations[currPlayer[0]][currPlayer[1]].push(translateX);
-        playerYTranslations[currPlayer[0]][currPlayer[1]].push(translateY);
-        if(playerXTranslations[currPlayer[0]][currPlayer[1] + 1]) {
-          for(let i = currPlayer[1] + 1; i < playerXTranslations[currPlayer[0]].length; i++) {
-            playerXTranslations[currPlayer[0]][i][0] -= 90;
+          playerCards.push(deck.pop());
+      
+          playersCards[currPlayer[0]][currPlayer[1]] = playerCards;
+    
+          playerXTranslations[currPlayer[0]][currPlayer[1]].push(translateX);
+          playerYTranslations[currPlayer[0]][currPlayer[1]].push(translateY);
+          if(playerXTranslations[currPlayer[0]][currPlayer[1] + 1]) {
+            for(let i = currPlayer[1] + 1; i < playerXTranslations[currPlayer[0]].length; i++) {
+              playerXTranslations[currPlayer[0]][i][0] -= 90;
+            }
           }
         }
+        if(i < 1) {
+          let dealerCard = deck.pop();
+          dealerCards.push(dealerCard);
+        }
       }
-      if(i < 1) {
-        let dealerCard = deck.pop();
-        dealerCards.push(dealerCard);
+  
+      let normalPlayButtons;
+      let normalPlayButtonsIsDisabled;
+      let normalPlayButtons2;
+      let normalPlayButtonsIsDisabled2;
+      if(this.state.currPlayer[0] === 0) {
+        //player 1
+        normalPlayButtons = 'visible';
+        normalPlayButtonsIsDisabled = false;
+        normalPlayButtons2 = 'hidden';
+        normalPlayButtonsIsDisabled2 = true;
+      } else {
+        //player 2
+        normalPlayButtons = 'hidden';
+        normalPlayButtonsIsDisabled = true;
+        normalPlayButtons2 = 'visible';
+        normalPlayButtonsIsDisabled2 = false;
       }
+  
+      this.setState({
+        normalPlayButtons,
+        normalPlayButtonsIsDisabled,
+        normalPlayButtons2,
+        normalPlayButtonsIsDisabled2,
+        playersCards,
+        playerXTranslations,
+        playerYTranslations,
+        deck,
+        dealerCards,
+      }, () => this.handleHandPossibilities(false));
     }
-
-    let normalPlayButtons;
-    let normalPlayButtonsIsDisabled;
-    let normalPlayButtons2;
-    let normalPlayButtonsIsDisabled2;
-    if(this.state.currPlayer[0] === 0) {
-      //player 1
-      normalPlayButtons = 'visible';
-      normalPlayButtonsIsDisabled = false;
-      normalPlayButtons2 = 'hidden';
-      normalPlayButtonsIsDisabled2 = true;
-    } else {
-      //player 2
-      normalPlayButtons = 'hidden';
-      normalPlayButtonsIsDisabled = true;
-      normalPlayButtons2 = 'visible';
-      normalPlayButtonsIsDisabled2 = false;
-    }
-
-    this.setState({
-      normalPlayButtons,
-      normalPlayButtonsIsDisabled,
-      normalPlayButtons2,
-      normalPlayButtonsIsDisabled2,
-      playersCards,
-      playerXTranslations,
-      playerYTranslations,
-      deck,
-      dealerCards,
-    }, () => this.handleHandPossibilities(false));
   }
 
   timeout(ms) {
@@ -367,8 +411,6 @@ class App extends React.Component {
     playersCards[this.state.currPlayer[0]][this.state.currPlayer[1]] = currHand;
     playersCards[this.state.currPlayer[0]].push(splitHand);
 
-
-
     let playerXTranslations = this.state.playerXTranslations.slice(0);
     let playerYTranslations = this.state.playerYTranslations.slice(0);
     let totalCurrHandsIndex = playersCards[this.state.currPlayer[0]].length - 2; //minus two to account for the newly added card
@@ -571,8 +613,11 @@ class App extends React.Component {
                 })
               }
             </div>
+            <div className="JoinButton">
+              <button id="join" className="join" style={{visibility: this.state.joinButton}} disabled={this.state.joinButtonDisabled} onClick={() => this.joinGame('1')}>Join</button>
+            </div>
             <div className="ReadyButton">
-              <button id="ready" className="Ready" onClick={this.startRound}>Ready</button>
+              <button id="ready" className="Ready" style={{visibility: this.state.readyButton}} disabled={this.state.readyButtonDisabled} onClick={this.startRound}>Ready</button>
             </div>
             <div className="buttons">
               <div className="buttonContainer">
@@ -607,8 +652,11 @@ class App extends React.Component {
                 })
               }
             </div>
+            <div className="JoinButton2">
+              <button id="join" className="join" style={{visibility: this.state.joinButton2}} disabled={this.state.joinButtonDisabled2}  onClick={() => this.joinGame('2')}>Join</button>
+            </div>
             <div className="ReadyButton2">
-              <button id="ready" className="Ready" onClick={this.startRound}>Ready</button>
+              <button id="ready" className="Ready" style={{visibility: this.state.readyButton2}} disabled={this.state.readyButtonDisabled2} onClick={this.startRound}>Ready</button>
             </div>
             <div className="buttons2">
               <div className="buttonContainer">

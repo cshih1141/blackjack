@@ -61,7 +61,7 @@
   transform: translateX(-160px);
 } */
 
-#hit, #stay, #doubleDown, #split, #ready {
+#hit, #stay, #doubleDown, #split, #ready, #join {
   cursor: pointer;
   height: 50px;
   width: 200px;
@@ -101,12 +101,21 @@
   border-color: black;
   border-style: solid;
 }
+.JoinButton {
+  position: absolute;
+  left: 80%;
+  bottom: 180px;
+  display: grid;
+  grid-template-columns: 205px 205px;
+  grid-template-rows: 55px 55px;
+  background: transparent;
+  border-color: black;
+  border-style: solid;
+}
 
 .buttonContainer {
   background:transparent;
 }
-
-
 
 
 .buttons2 {
@@ -121,6 +130,17 @@
   border-style: solid;
 }
 
+.JoinButton2 {
+  position: absolute;
+  left: 10%;
+  bottom: 180px;
+  display: grid;
+  grid-template-columns: 205px 205px;
+  grid-template-rows: 55px 55px;
+  background: transparent;
+  border-color: black;
+  border-style: solid;
+}
 .ReadyButton2 {
   position: absolute;
   left: 10%;
