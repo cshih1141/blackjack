@@ -3,8 +3,6 @@ import Card from './Card';
 import DealerCards from './DealerCards';
 const Promise = require('bluebird');
 import { subscribeToGameDetails, updateGameStatus, joinGame } from './Socket';
-import openSocket from 'socket.io-client';
-const socket = openSocket('http://localhost:3000');
 
 //TODO: update deck to take in x cards (6 deck 8 deck, double deck)
 //display wizard of odds table
@@ -339,14 +337,14 @@ class App extends React.Component {
           console.log('YOU BUSTED');
           //deduct money then
           if (this.state.currPlayer !== -1) {
-            this.completeTurn();
+            this.completeTurn(true);
           }
           dealerHandCompleted = true;
           // return -1; //TODO: move this to complete turn and store in state for player
         } else if (currHandTotals[0] === 21 || currHandTotals[1] === 21) {
           console.log('YOU GOT 21');
           if (this.state.currPlayer !== -1) {
-            this.completeTurn();
+            this.completeTurn(true);
           }
           dealerHandCompleted = true;
           // return 21; //TODO: move this to complete turn and store in state for player
@@ -356,14 +354,14 @@ class App extends React.Component {
           console.log('YOU BUSTED');
           //deduct money then
           if (this.state.currPlayer !== -1) {
-            this.completeTurn();
+            this.completeTurn(true);
           }
           dealerHandCompleted = true;
           // return -1; //TODO: move this to complete turn and store in state for player
         } else if (currHandTotals[0] === 21) {
           console.log('YOU GOT 21');
           if (this.state.currPlayer !== -1) {
-            this.completeTurn();
+            this.completeTurn(true);
           }
           dealerHandCompleted = true;
           // return 21; //TODO: move this to complete turn and store in state for player
@@ -372,7 +370,7 @@ class App extends React.Component {
       console.log(currHandTotals);
       if(isDoubleDown) {
         if (this.state.currPlayer !== -1) {
-          this.completeTurn();
+          this.completeTurn(true);
         }
         dealerHandCompleted = true;
         //TODO: move this to complete turn and store in state for player
@@ -420,10 +418,10 @@ class App extends React.Component {
       }
       console.log('this is curr totals ' + JSON.stringify(currTotals));
       if(!handCompleted) {
-        setTimeout(this.dealCard, 1000);
+        setTimeout(this.dealCard(false, true), 1000);
       } else {
         setTimeout(() => {
-          this.completeTurn();
+          this.completeTurn(true);
           alert('DEALER HAND IS OVER');
           console.log(this.state.deck.length);
         }, 1000);
@@ -472,7 +470,7 @@ class App extends React.Component {
     if(!sentFromSocket) {
       updateGameStatus('doubleDown');
     }
-    this.dealCard(true);
+    this.dealCard(true, true);
   }
 
   //TODO: need to fix multiple splits display and ordering
@@ -603,7 +601,7 @@ class App extends React.Component {
         splitIsDisabled2,
       }, () => {
         if (this.state.currPlayer === -1) {
-          setTimeout(this.dealCard(false), 1000);
+          setTimeout(this.dealCard(false, true), 1000);
           console.log(this.state);
         }
       });
@@ -736,13 +734,13 @@ class App extends React.Component {
                 <button id="hit" style={{visibility: this.state.normalPlayButtons2}} disabled={this.state.normalPlayButtonsIsDisabled2} onClick={() => this.dealCard(false)}>hit</button>
               </div>
               <div className="buttonContainer">
-                <button id="stay" style={{visibility: this.state.normalPlayButtons2}} disabled={this.state.normalPlayButtonsIsDisabled2} onClick={this.completeTurn}>Stay</button>
+                <button id="stay" style={{visibility: this.state.normalPlayButtons2}} disabled={this.state.normalPlayButtonsIsDisabled2} onClick={() => this.completeTurn(false)}>Stay</button>
               </div>
               <div className="buttonContainer">
-                <button id="doubleDown" style={{visibility: this.state.normalPlayButtons2}} disabled={this.state.normalPlayButtonsIsDisabled2} onClick={this.doubleDown}>Double Down</button>
+                <button id="doubleDown" style={{visibility: this.state.normalPlayButtons2}} disabled={this.state.normalPlayButtonsIsDisabled2} onClick={() => this.doubleDown(false)}>Double Down</button>
               </div>
               <div className="buttonContainer">
-                <button id="split" style={{visibility: this.state.splitButtonStatus2}} disabled={this.state.splitIsDisabled2} onClick={this.splitHand}>Split</button>
+                <button id="split" style={{visibility: this.state.splitButtonStatus2}} disabled={this.state.splitIsDisabled2} onClick={() => this.splitHand(false)}>Split</button>
               </div>
             </div>
           </div>
