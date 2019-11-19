@@ -54,7 +54,6 @@ class App extends React.Component {
     let dealerCards = JSON.parse(JSON.stringify(this.state.dealerCards.slice(0)));
     let playersCards = JSON.parse(JSON.stringify(this.state.playersCards.slice(0)));
     let deck = JSON.parse(JSON.stringify(this.state.deck.slice(0)));
-    debugger;
     for (let i = 0; i < 2; i++) {
       for (let j = 0; j < this.state.playersCards.length; j++) {
         currPlayer = [j,0];
@@ -149,10 +148,10 @@ class App extends React.Component {
   resetTable() {
     this.setState({
       currPlayer : [0, 0],
-      playersCards: [ [[]] ],
+      playersCards: [ [[]], [[]] ],
       dealerCards: [],
-      playerXTranslations:[ [[-10]] ],
-      playerYTranslations:[ [[-40]] ],
+      playerXTranslations:[ [[-10]], [[-10]] ],
+      playerYTranslations:[ [[-40]], [[-40]] ],
       normalPlayButtons: 'hidden',
       normalPlayButtonsIsDisabled : true,
       splitButtonStatus: 'hidden', //visible
@@ -453,51 +452,76 @@ class App extends React.Component {
                                                     key={key} 
                                                     index={key} />)}
         </div>
-        <div className="Cards PlayerCards">
-          {this.state.playersCards[0].map((player, currPlayerIndex) =>  {
-              if(player.length > 0) {
-                return player.map((card, key) => <Card card={card}
-                                                       key={key} 
-                                                       index={key} 
-                                                       currPlayer={this.state.currPlayer}
-                                                       playerTranslateX={this.state.playerXTranslations}
-                                                       playerTranslateY={this.state.playerYTranslations}
-                                                       currPlayer={0}
-                                                       currPlayerIndex={currPlayerIndex}/>)
+        <div className="applicationContainer" id="applicationContainer">
+          <div className="player1">
+            <div className="Cards PlayerCards">
+              {this.state.playersCards[0].map((player, currPlayerIndex) =>  {
+                  if(player.length > 0) {
+                    return player.map((card, key) => <Card card={card}
+                                                          key={key} 
+                                                          index={key} 
+                                                          currPlayer={this.state.currPlayer}
+                                                          playerTranslateX={this.state.playerXTranslations}
+                                                          playerTranslateY={this.state.playerYTranslations}
+                                                          currPlayer={0}
+                                                          currPlayerIndex={currPlayerIndex}/>)
+                  }
+                })
               }
-            })
-          }
-        </div>
-        <div className="Cards PlayerCards">
-          {this.state.playersCards[1].map((player, currPlayerIndex) =>  {
-              if(player.length > 0) {
-                return player.map((card, key) => <Card card={card}
-                                                       key={key} 
-                                                       index={key} 
-                                                       currPlayer={this.state.currPlayer}
-                                                       playerTranslateX={this.state.playerXTranslations}
-                                                       playerTranslateY={this.state.playerYTranslations}
-                                                       currPlayer={1}
-                                                       currPlayerIndex={currPlayerIndex}/>)
+            </div>
+            <div className="ReadyButton">
+              <button id="ready" className="Ready" onClick={this.startRound}>Ready</button>
+            </div>
+            <div className="buttons">
+              <div className="buttonContainer">
+                <button id="hit" style={{visibility: this.state.normalPlayButtons}} disabled={this.state.normalPlayButtonsIsDisabled} onClick={() => this.dealCard(false)}>hit</button>
+              </div>
+              <div className="buttonContainer">
+                <button id="stay" style={{visibility: this.state.normalPlayButtons}} disabled={this.state.normalPlayButtonsIsDisabled} onClick={this.completeTurn}>Stay</button>
+              </div>
+              <div className="buttonContainer">
+                <button id="doubleDown" style={{visibility: this.state.normalPlayButtons}} disabled={this.state.normalPlayButtonsIsDisabled} onClick={this.doubleDown}>Double Down</button>
+              </div>
+              <div className="buttonContainer">
+                <button id="split" style={{visibility: this.state.splitButtonStatus}} disabled={this.state.splitIsDisabled} onClick={this.splitHand}>Split</button>
+              </div>
+            </div>
+          </div>
+
+
+          <div className="player2">
+            <div className="Cards PlayerCards2">
+              {this.state.playersCards[1].map((player, currPlayerIndex) =>  {
+                  if(player.length > 0) {
+                    return player.map((card, key) => <Card card={card}
+                                                          key={key} 
+                                                          index={key} 
+                                                          currPlayer={this.state.currPlayer}
+                                                          playerTranslateX={this.state.playerXTranslations}
+                                                          playerTranslateY={this.state.playerYTranslations}
+                                                          currPlayer={1}
+                                                          currPlayerIndex={currPlayerIndex}/>)
+                  }
+                })
               }
-            })
-          }
-        </div>
-        <div className="ReadyButton">
-          <button id="ready" className="Ready" onClick={this.startRound}>Ready</button>
-        </div>
-        <div className="buttons">
-          <div className="buttonContainer">
-            <button id="hit" style={{visibility: this.state.normalPlayButtons}} disabled={this.state.normalPlayButtonsIsDisabled} onClick={() => this.dealCard(false)}>hit</button>
-          </div>
-          <div className="buttonContainer">
-            <button id="stay" style={{visibility: this.state.normalPlayButtons}} disabled={this.state.normalPlayButtonsIsDisabled} onClick={this.completeTurn}>Stay</button>
-          </div>
-          <div className="buttonContainer">
-            <button id="doubleDown" style={{visibility: this.state.normalPlayButtons}} disabled={this.state.normalPlayButtonsIsDisabled} onClick={this.doubleDown}>Double Down</button>
-          </div>
-          <div className="buttonContainer">
-            <button id="split" style={{visibility: this.state.splitButtonStatus}} disabled={this.state.splitIsDisabled} onClick={this.splitHand}>Split</button>
+            </div>
+            <div className="ReadyButton2">
+              <button id="ready" className="Ready" onClick={this.startRound}>Ready</button>
+            </div>
+            <div className="buttons2">
+              <div className="buttonContainer">
+                <button id="hit" style={{visibility: this.state.normalPlayButtons}} disabled={this.state.normalPlayButtonsIsDisabled} onClick={() => this.dealCard(false)}>hit</button>
+              </div>
+              <div className="buttonContainer">
+                <button id="stay" style={{visibility: this.state.normalPlayButtons}} disabled={this.state.normalPlayButtonsIsDisabled} onClick={this.completeTurn}>Stay</button>
+              </div>
+              <div className="buttonContainer">
+                <button id="doubleDown" style={{visibility: this.state.normalPlayButtons}} disabled={this.state.normalPlayButtonsIsDisabled} onClick={this.doubleDown}>Double Down</button>
+              </div>
+              <div className="buttonContainer">
+                <button id="split" style={{visibility: this.state.splitButtonStatus}} disabled={this.state.splitIsDisabled} onClick={this.splitHand}>Split</button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
