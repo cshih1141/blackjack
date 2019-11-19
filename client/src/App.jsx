@@ -82,9 +82,7 @@ class App extends React.Component {
 
     joinGame((err, data) => {
       let playerNum = this.state.playerNum;
-      if(playerNum === null) {
-        playerNum = data.player;
-      }
+      playerNum = data.player;
 
       let deck = data.deck;
       this.setState({ 
@@ -235,7 +233,7 @@ class App extends React.Component {
       let normalPlayButtonsIsDisabled2 = this.state.normalPlayButtonsIsDisabled2;
       if(this.state.currPlayer[0] === 0) {
         //player 1
-        if (this.state.playerNum === Number(this.state.joinBelongsTo)) {
+        if (this.state.playerNum === this.state.joinBelongsTo) {
           console.log('hello');
           normalPlayButtons = 'visible';
           normalPlayButtonsIsDisabled = false;
@@ -244,7 +242,7 @@ class App extends React.Component {
         normalPlayButtonsIsDisabled2 = true;
       } else {
         //player 2
-        if (this.state.playerNum === Number(this.state.joinBelongsTo2)) {
+        if (this.state.playerNum === this.state.joinBelongsTo2) {
           console.log('i am here');
           normalPlayButtons2 = 'visible';
           normalPlayButtonsIsDisabled2 = false;
@@ -330,11 +328,11 @@ class App extends React.Component {
     let readyButton2 = this.state.readyButton2;
     let readyButtonDisabled2 = this.state.readyButtonDisabled2;
 
-    if (this.state.playerNum === Number(this.state.joinBelongsTo)) {
+    if (this.state.playerNum === this.state.joinBelongsTo) {
       readyButton = 'visible';
       readyButtonDisabled = false;
     }
-    if (this.state.playerNum === Number(this.state.joinBelongsTo2)) {
+    if (this.state.playerNum === this.state.joinBelongsTo2) {
       readyButton2 = 'visible';
       readyButtonDisabled2 = false;
     }
@@ -499,7 +497,7 @@ class App extends React.Component {
     if (currHand.length === 2 && currHand[0][1] === currHand[1][1]) {
       if(this.state.currPlayer[0] === 0) {
         //player 1
-        if (this.state.playerNum === Number(this.state.joinBelongsTo)) {
+        if (this.state.playerNum === this.state.joinBelongsTo) {
           let splitButtonStatus = 'visible';
           let splitIsDisabled = false;
   
@@ -510,7 +508,7 @@ class App extends React.Component {
         }
       } else {
         //player 2
-        if (this.state.playerNum === Number(this.state.joinBelongsTo2)) {
+        if (this.state.playerNum === this.state.joinBelongsTo2) {
           let splitButtonStatus2 = 'visible';
           let splitIsDisabled2 = false;
   
@@ -597,7 +595,7 @@ class App extends React.Component {
     let normalPlayButtonsIsDisabled2 = this.state.normalPlayButtonsIsDisabled2;
     if(this.state.currPlayer[0] === 0) {
       //player 1
-      if (this.state.playerNum === Number(this.state.joinBelongsTo)) {
+      if (this.state.playerNum === this.state.joinBelongsTo) {
         normalPlayButtons = 'visible';
         normalPlayButtonsIsDisabled = false;
       }
@@ -605,7 +603,7 @@ class App extends React.Component {
       normalPlayButtonsIsDisabled2 = true;
     } else {
       //player 2
-      if (this.state.playerNum === Number(this.state.joinBelongsTo2)) {
+      if (this.state.playerNum === this.state.joinBelongsTo2) {
         normalPlayButtons2 = 'visible';
         normalPlayButtonsIsDisabled2 = false;
       }
@@ -648,7 +646,7 @@ class App extends React.Component {
         currPlayer = [currPlayer[0] + 1, 0];
         normalPlayButtons = 'hidden';
         normalPlayButtonsIsDisabled = true;
-        if (this.state.playerNum === Number(this.state.joinBelongsTo2)) {
+        if (this.state.playerNum === this.state.joinBelongsTo2) {
           normalPlayButtons2 = 'visible';
           normalPlayButtonsIsDisabled2 = false;
         }
