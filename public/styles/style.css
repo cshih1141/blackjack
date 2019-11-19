@@ -42,7 +42,7 @@
   transform: translateX(-160px);
 } */
 
-#hit, #stay, #doubleDown, #split {
+#hit, #stay, #doubleDown, #split, #ready {
   cursor: pointer;
   height: 50px;
   width: 200px;
@@ -63,6 +63,18 @@
   position: absolute;
   left: 35%;
   bottom: 60px;
+  display: grid;
+  grid-template-columns: 205px 205px;
+  grid-template-rows: 55px 55px;
+  background: transparent;
+  border-color: black;
+  border-style: solid;
+}
+
+.ReadyButton {
+  position: absolute;
+  left: 70%;
+  bottom: 30px;
   display: grid;
   grid-template-columns: 205px 205px;
   grid-template-rows: 55px 55px;
