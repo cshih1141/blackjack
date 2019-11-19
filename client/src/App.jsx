@@ -14,8 +14,10 @@ class App extends React.Component {
 
     joinGame((err, data) => {
       let playerNum = data.player;
+      let deck = data.deck;
       this.setState({ 
-        playerNum 
+        playerNum, 
+        deck
       }, () => console.log(this.state.playerNum)) 
     });
 
@@ -67,11 +69,11 @@ class App extends React.Component {
       playerNum : null,
     }
 
-    this.createDeck = this.createDeck.bind(this);
+    // this.createDeck = this.createDeck.bind(this);
     this.completeTurn = this.completeTurn.bind(this);
     this.dealCard = this.dealCard.bind(this);
-    this.getRandomCard = this.getRandomCard.bind(this);
-    this.shuffleDeck = this.shuffleDeck.bind(this);
+    // this.getRandomCard = this.getRandomCard.bind(this);
+    // this.shuffleDeck = this.shuffleDeck.bind(this);
     this.handleHandPossibilities = this.handleHandPossibilities.bind(this);
     this.doubleDown = this.doubleDown.bind(this);
     this.splitHand = this.splitHand.bind(this);
@@ -597,55 +599,55 @@ class App extends React.Component {
     }
   }
 
-  getRandomCard(min, max) {
-    return min +  (Math.floor(Math.random() * Math.floor(max - min)));
-  }
+  // getRandomCard(min, max) {
+  //   return min +  (Math.floor(Math.random() * Math.floor(max - min)));
+  // }
 
-  shuffleDeck(deck) {
-    let tempStorage = '';
-    let randomIndex;
-    for(let i = 0; i < deck.length; i++) {
-      randomIndex = this.getRandomCard(i, deck.length);
-      tempStorage = deck[i];
-      deck[i] = deck[randomIndex];
-      deck[randomIndex] = tempStorage;
-    }
+  // shuffleDeck(deck) {
+  //   let tempStorage = '';
+  //   let randomIndex;
+  //   for(let i = 0; i < deck.length; i++) {
+  //     randomIndex = this.getRandomCard(i, deck.length);
+  //     tempStorage = deck[i];
+  //     deck[i] = deck[randomIndex];
+  //     deck[randomIndex] = tempStorage;
+  //   }
   
-    return deck;
-  };
+  //   return deck;
+  // };
 
-  createDeck(numDecks) {
-    let deck = [];
-    for(let i = 0; i < this.state.suits.length; i++) {
-      for (let j = 0; j < this.state.cardNumber.length; j++) {
-        let cardNumber;
-        if(this.state.cardNumber[j] === 'A') {
-          cardNumber = 11
-        } else if (this.state.cardNumber[j] === 'J' || this.state.cardNumber[j] === 'Q' || this.state.cardNumber[j] === 'K') {
-          cardNumber = 10;
-        } else {
-          cardNumber = Number(this.state.cardNumber[j]);
-        }
-        deck.push([this.state.cardNumber[j] + this.state.suits[i], cardNumber]);
-      }
-    }
+  // createDeck(numDecks) {
+  //   let deck = [];
+  //   for(let i = 0; i < this.state.suits.length; i++) {
+  //     for (let j = 0; j < this.state.cardNumber.length; j++) {
+  //       let cardNumber;
+  //       if(this.state.cardNumber[j] === 'A') {
+  //         cardNumber = 11
+  //       } else if (this.state.cardNumber[j] === 'J' || this.state.cardNumber[j] === 'Q' || this.state.cardNumber[j] === 'K') {
+  //         cardNumber = 10;
+  //       } else {
+  //         cardNumber = Number(this.state.cardNumber[j]);
+  //       }
+  //       deck.push([this.state.cardNumber[j] + this.state.suits[i], cardNumber]);
+  //     }
+  //   }
 
-    let totalDecks = [];
-    for (let i = 0; i < 6; i++) {
-      totalDecks = totalDecks.concat(deck);
-    }
+  //   let totalDecks = [];
+  //   for (let i = 0; i < 6; i++) {
+  //     totalDecks = totalDecks.concat(deck);
+  //   }
 
-    deck = totalDecks;
+  //   deck = totalDecks;
 
-    this.shuffleDeck(deck);
+  //   this.shuffleDeck(deck);
 
-    this.setState({
-      deck
-    });
-  }
+  //   this.setState({
+  //     deck
+  //   });
+  // }
 
   componentDidMount() {
-    this.createDeck();
+    // this.createDeck();
   }
 
   render() {
