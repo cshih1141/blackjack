@@ -480,7 +480,7 @@ class App extends React.Component {
       } else {
         setTimeout(() => {
           this.completeTurn(true);
-          alert('DEALER HAND IS OVER');
+          alert('Hand is complete. Ready up to play again.');
           console.log(this.state.deck.length);
         }, 1000);
       }
