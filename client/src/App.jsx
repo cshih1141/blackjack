@@ -630,7 +630,6 @@ class App extends React.Component {
           normalPlayButtons2 = 'hidden';
           normalPlayButtonsIsDisabled2 = true;
         }
-
         if(this.state.currPlayer[0] === 1) {
           //player 1
           splitButtonStatus = 'hidden'; //visible
@@ -640,7 +639,6 @@ class App extends React.Component {
           splitButtonStatus2 = 'hidden'; //visible
           splitIsDisabled2 = true; //false
         }
-
         currPlayer = -1; //dealer
       } else {
         currPlayer = [currPlayer[0] + 1, 0];
@@ -665,62 +663,14 @@ class App extends React.Component {
         splitIsDisabled2,
       }, () => {
         if (this.state.currPlayer === -1) {
-          setTimeout(this.dealCard(false, true), 1000);
+          setTimeout(() => this.dealCard(false, true), 1000);
           console.log(this.state);
         }
       });
     }
   }
 
-  // getRandomCard(min, max) {
-  //   return min +  (Math.floor(Math.random() * Math.floor(max - min)));
-  // }
-
-  // shuffleDeck(deck) {
-  //   let tempStorage = '';
-  //   let randomIndex;
-  //   for(let i = 0; i < deck.length; i++) {
-  //     randomIndex = this.getRandomCard(i, deck.length);
-  //     tempStorage = deck[i];
-  //     deck[i] = deck[randomIndex];
-  //     deck[randomIndex] = tempStorage;
-  //   }
-  
-  //   return deck;
-  // };
-
-  // createDeck(numDecks) {
-  //   let deck = [];
-  //   for(let i = 0; i < this.state.suits.length; i++) {
-  //     for (let j = 0; j < this.state.cardNumber.length; j++) {
-  //       let cardNumber;
-  //       if(this.state.cardNumber[j] === 'A') {
-  //         cardNumber = 11
-  //       } else if (this.state.cardNumber[j] === 'J' || this.state.cardNumber[j] === 'Q' || this.state.cardNumber[j] === 'K') {
-  //         cardNumber = 10;
-  //       } else {
-  //         cardNumber = Number(this.state.cardNumber[j]);
-  //       }
-  //       deck.push([this.state.cardNumber[j] + this.state.suits[i], cardNumber]);
-  //     }
-  //   }
-
-  //   let totalDecks = [];
-  //   for (let i = 0; i < 6; i++) {
-  //     totalDecks = totalDecks.concat(deck);
-  //   }
-
-  //   deck = totalDecks;
-
-  //   this.shuffleDeck(deck);
-
-  //   this.setState({
-  //     deck
-  //   });
-  // }
-
   componentDidMount() {
-    // this.createDeck();
   }
 
   render() {
