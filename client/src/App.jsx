@@ -24,6 +24,11 @@ class App extends React.Component {
       normalPlayButtonsIsDisabled : true,
       splitButtonStatus: 'hidden', //visible
       splitIsDisabled: true, //false
+      
+      normalPlayButtons2: 'hidden',
+      normalPlayButtonsIsDisabled2 : true,
+      splitButtonStatus2: 'hidden', //visible
+      splitIsDisabled2: true, //false
     }
 
     this.createDeck = this.createDeck.bind(this);
@@ -80,9 +85,30 @@ class App extends React.Component {
         dealerCards.push(dealerCard);
       }
     }
+
+    let normalPlayButtons;
+    let normalPlayButtonsIsDisabled;
+    let normalPlayButtons2;
+    let normalPlayButtonsIsDisabled2;
+    if(this.state.currPlayer[0] === 0) {
+      //player 1
+      normalPlayButtons = 'visible';
+      normalPlayButtonsIsDisabled = false;
+      normalPlayButtons2 = 'hidden';
+      normalPlayButtonsIsDisabled2 = true;
+    } else {
+      //player 2
+      normalPlayButtons = 'hidden';
+      normalPlayButtonsIsDisabled = true;
+      normalPlayButtons2 = 'visible';
+      normalPlayButtonsIsDisabled2 = false;
+    }
+
     this.setState({
-      normalPlayButtons: 'visible',
-      normalPlayButtonsIsDisabled : false,
+      normalPlayButtons,
+      normalPlayButtonsIsDisabled,
+      normalPlayButtons2,
+      normalPlayButtonsIsDisabled2,
       playersCards,
       playerXTranslations,
       playerYTranslations,
@@ -154,8 +180,12 @@ class App extends React.Component {
       playerYTranslations:[ [[-40]], [[-40]] ],
       normalPlayButtons: 'hidden',
       normalPlayButtonsIsDisabled : true,
+      normalPlayButtons2: 'hidden',
+      normalPlayButtonsIsDisabled2 : true,
       splitButtonStatus: 'hidden', //visible
       splitIsDisabled: true, //false
+      splitButtonStatus2: 'hidden', //visible
+      splitIsDisabled2: true, //false
     });
   }
 
@@ -294,13 +324,27 @@ class App extends React.Component {
   handleHandPossibilities(isDoubleDown) {
     let currHand = this.state.playersCards[this.state.currPlayer[0]][this.state.currPlayer[1]];
     if (currHand.length === 2 && currHand[0][1] === currHand[1][1]) {
-      let splitButtonStatus = 'visible';
-      let splitIsDisabled = false;
+      if(this.state.currPlayer[0] === 0) {
+        //player 1
+        let splitButtonStatus = 'visible';
+        let splitIsDisabled = false;
 
-      this.setState({
-        splitButtonStatus,
-        splitIsDisabled
-      }, () => console.log(this.state));
+        this.setState({
+          splitButtonStatus,
+          splitIsDisabled,
+        }, () => console.log(this.state));
+      } else {
+        //player 2
+        let splitButtonStatus2 = 'visible';
+        let splitIsDisabled2 = false;
+
+        this.setState({
+          splitButtonStatus2,
+          splitIsDisabled2
+        }, () => console.log(this.state));
+      }
+
+
     } else {
       this.disableSplit();
     }
@@ -338,6 +382,8 @@ class App extends React.Component {
       playerYTranslations,
       splitButtonStatus : 'hidden',
       splitIsDisabled : true,
+      splitButtonStatus2 : 'hidden',
+      splitIsDisabled2 : true,
     }, () => {
       console.log(this.state.playersCards);
       console.log(this.state.playerXTranslations)
@@ -349,21 +395,50 @@ class App extends React.Component {
   }
   
   disableSplit() {
-    let splitButtonStatus = 'hidden';
-    let splitIsDisabled = true;
 
-    this.setState({
-      splitButtonStatus,
-      splitIsDisabled
-    }, () => console.log(this.state));
+
+    if(this.state.currPlayer[0] === 0) {
+      //player 1
+      let splitButtonStatus = 'hidden';
+      let splitIsDisabled = true;
+      this.setState({
+        splitButtonStatus,
+        splitIsDisabled,
+      }, () => console.log(this.state));
+    } else {
+      //player 2
+      let splitButtonStatus2 = 'hidden';
+      let splitIsDisabled2 = true;
+      this.setState({
+        splitButtonStatus2,
+        splitIsDisabled2
+      }, () => console.log(this.state));
+    }
   }
 
   completeTurn() {
     let currPlayer;
-    let normalPlayButtons = 'visible';
-    let normalPlayButtonsIsDisabled = false;
+    let normalPlayButtons;
+    let normalPlayButtonsIsDisabled;
+    let normalPlayButtons2;
+    let normalPlayButtonsIsDisabled2;
+    if(this.state.currPlayer[0] === 0) {
+      //player 1
+      normalPlayButtons = 'visible';
+      normalPlayButtonsIsDisabled = false;
+      normalPlayButtons2 = 'hidden';
+      normalPlayButtonsIsDisabled2 = true;
+    } else {
+      //player 2
+      normalPlayButtons = 'hidden';
+      normalPlayButtonsIsDisabled = true;
+      normalPlayButtons2 = 'visible';
+      normalPlayButtonsIsDisabled2 = false;
+    }
     let splitButtonStatus = this.state.splitButtonStatus;
     let splitIsDisabled = this.state.splitIsDisabled;
+    let splitButtonStatus2 = this.state.splitButtonStatus2;
+    let splitIsDisabled2 = this.state.splitIsDisabled2;
     if(this.state.currPlayer === -1) { //dealer
       this.resetTable();
     } else {
@@ -371,23 +446,50 @@ class App extends React.Component {
       if(this.state.playersCards[currPlayer[0]][currPlayer[1] + 1]) {
         currPlayer = [currPlayer[0], currPlayer[1] + 1];
       } else if (!this.state.playersCards[currPlayer[0] + 1]) { //switch to dealer
-        normalPlayButtons = 'hidden';
-        normalPlayButtonsIsDisabled = true;
-        splitButtonStatus = 'hidden', //visible
-        splitIsDisabled = true, //false
+        if(this.state.currPlayer[0] === 1) {
+          //player 1
+          normalPlayButtons = 'hidden';
+          normalPlayButtonsIsDisabled = true;
+        } else {
+          //player 2
+          normalPlayButtons2 = 'hidden';
+          normalPlayButtonsIsDisabled2 = true;
+        }
+
+        if(this.state.currPlayer[0] === 1) {
+          //player 1
+          splitButtonStatus = 'hidden'; //visible
+          splitIsDisabled = true; //false
+        } else {
+          //player 2
+          splitButtonStatus2 = 'hidden'; //visible
+          splitIsDisabled2 = true; //false
+        }
+
         currPlayer = -1; //dealer
       } else {
         currPlayer = [currPlayer[0] + 1, 0];
+        normalPlayButtons = 'hidden';
+        normalPlayButtonsIsDisabled = true;
+        normalPlayButtons2 = 'visible';
+        normalPlayButtonsIsDisabled2 = false;
+        splitButtonStatus = 'hidden';
+        splitIsDisabled = true;
       }
       this.setState({
         currPlayer,
         normalPlayButtons,
         normalPlayButtonsIsDisabled,
+        normalPlayButtons2,
+        normalPlayButtonsIsDisabled2,
         splitButtonStatus,
         splitIsDisabled,
+        splitButtonStatus2,
+        splitIsDisabled2,
       }, () => {
         if (this.state.currPlayer === -1) {
           setTimeout(this.dealCard(false), 1000);
+          console.log(this.state);
         }
       });
     }
@@ -510,16 +612,16 @@ class App extends React.Component {
             </div>
             <div className="buttons2">
               <div className="buttonContainer">
-                <button id="hit" style={{visibility: this.state.normalPlayButtons}} disabled={this.state.normalPlayButtonsIsDisabled} onClick={() => this.dealCard(false)}>hit</button>
+                <button id="hit" style={{visibility: this.state.normalPlayButtons2}} disabled={this.state.normalPlayButtonsIsDisabled2} onClick={() => this.dealCard(false)}>hit</button>
               </div>
               <div className="buttonContainer">
-                <button id="stay" style={{visibility: this.state.normalPlayButtons}} disabled={this.state.normalPlayButtonsIsDisabled} onClick={this.completeTurn}>Stay</button>
+                <button id="stay" style={{visibility: this.state.normalPlayButtons2}} disabled={this.state.normalPlayButtonsIsDisabled2} onClick={this.completeTurn}>Stay</button>
               </div>
               <div className="buttonContainer">
-                <button id="doubleDown" style={{visibility: this.state.normalPlayButtons}} disabled={this.state.normalPlayButtonsIsDisabled} onClick={this.doubleDown}>Double Down</button>
+                <button id="doubleDown" style={{visibility: this.state.normalPlayButtons2}} disabled={this.state.normalPlayButtonsIsDisabled2} onClick={this.doubleDown}>Double Down</button>
               </div>
               <div className="buttonContainer">
-                <button id="split" style={{visibility: this.state.splitButtonStatus}} disabled={this.state.splitIsDisabled} onClick={this.splitHand}>Split</button>
+                <button id="split" style={{visibility: this.state.splitButtonStatus2}} disabled={this.state.splitIsDisabled2} onClick={this.splitHand}>Split</button>
               </div>
             </div>
           </div>
