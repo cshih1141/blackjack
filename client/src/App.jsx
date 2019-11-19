@@ -30,6 +30,8 @@ class App extends React.Component {
       splitIsDisabled2: true, //false
       hasPlayer1 : false,
       hasPlayer2 : false,
+      readyPlayer1 : false,
+      readyPlayer2 : false,
       readyButton : 'hidden',
       readyButtonDisabled : true,
       readyButton2 : 'hidden',
@@ -56,6 +58,7 @@ class App extends React.Component {
     this.startRound = this.startRound.bind(this);
     this.timeout = this.timeout.bind(this);
     this.joinGame = this.joinGame.bind(this);
+    this.readyUp = this.readyUp.bind(this);
   }
 
   joinGame(player) {
@@ -90,9 +93,27 @@ class App extends React.Component {
     });
   }
 
+  readyUp(player) {
+    let readyPlayer = player;
+    let readyButton;
+    let readyButtonDisabled;
+    if(readyPlayer === 'readyPlayer1') {
+      readyButton = 'readyButton';
+      readyButtonDisabled = 'readyButtonDisabled';
+    } else {
+      readyButton = 'readyButton2';
+      readyButtonDisabled = 'readyButtonDisabled2';
+    }
+    this.setState({
+      [readyPlayer] : true,
+      [readyButton] : 'hidden',
+      [readyButtonDisabled] : true,
+    }, this.startRound)
+  }
+
   //todo: add a button that starts the round
   startRound() {
-    if(this.state.hasPlayer1 && this.state.hasPlayer2) {
+    if(this.state.readyPlayer1 && this.state.readyPlayer2) {
       let playerCards;
       let translateX;
       let translateY;
@@ -230,6 +251,12 @@ class App extends React.Component {
       splitIsDisabled: true, //false
       splitButtonStatus2: 'hidden', //visible
       splitIsDisabled2: true, //false
+      readyButton : 'visible',
+      readyButtonDisabled : false,
+      readyButton2 : 'visible',
+      readyButtonDisabled2 : false,
+      readyPlayer1 : false,
+      readyPlayer2 : false,
     });
   }
 
@@ -617,7 +644,7 @@ class App extends React.Component {
               <button id="join" className="join" style={{visibility: this.state.joinButton}} disabled={this.state.joinButtonDisabled} onClick={() => this.joinGame('1')}>Join</button>
             </div>
             <div className="ReadyButton">
-              <button id="ready" className="Ready" style={{visibility: this.state.readyButton}} disabled={this.state.readyButtonDisabled} onClick={this.startRound}>Ready</button>
+              <button id="ready" className="Ready" style={{visibility: this.state.readyButton}} disabled={this.state.readyButtonDisabled} onClick={() => this.readyUp('readyPlayer1')}>Ready</button>
             </div>
             <div className="buttons">
               <div className="buttonContainer">
@@ -656,7 +683,7 @@ class App extends React.Component {
               <button id="join" className="join" style={{visibility: this.state.joinButton2}} disabled={this.state.joinButtonDisabled2}  onClick={() => this.joinGame('2')}>Join</button>
             </div>
             <div className="ReadyButton2">
-              <button id="ready" className="Ready" style={{visibility: this.state.readyButton2}} disabled={this.state.readyButtonDisabled2} onClick={this.startRound}>Ready</button>
+              <button id="ready" className="Ready" style={{visibility: this.state.readyButton2}} disabled={this.state.readyButtonDisabled2} onClick={() => this.readyUp('readyPlayer2')}>Ready</button>
             </div>
             <div className="buttons2">
               <div className="buttonContainer">
