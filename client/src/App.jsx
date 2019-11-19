@@ -137,7 +137,7 @@ class App extends React.Component {
       joinButton = 'hidden';
       joinButtonDisabled = true;
       if(!sentFromSocket) {
-        joinBelongsTo = player;
+        joinBelongsTo = this.state.playerNum;
         readyButtonStatus = 'visible';
         readyButtonDisabledStatus = false;
       }
@@ -146,7 +146,7 @@ class App extends React.Component {
       joinButton2 = 'hidden';
       joinButtonDisabled2 = true;
       if(!sentFromSocket) {
-        joinBelongsTo2 = player;
+        joinBelongsTo2 = this.state.playerNum;
         readyButtonStatus2 = 'visible';
         readyButtonDisabledStatus2 = false;
       }
@@ -634,8 +634,10 @@ class App extends React.Component {
         currPlayer = [currPlayer[0] + 1, 0];
         normalPlayButtons = 'hidden';
         normalPlayButtonsIsDisabled = true;
-        normalPlayButtons2 = 'visible';
-        normalPlayButtonsIsDisabled2 = false;
+        if (this.state.playerNum === Number(this.state.joinBelongsTo2)) {
+          normalPlayButtons2 = 'visible';
+          normalPlayButtonsIsDisabled2 = false;
+        }
         splitButtonStatus = 'hidden';
         splitIsDisabled = true;
       }
