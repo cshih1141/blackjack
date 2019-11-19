@@ -3,6 +3,8 @@ import Card from './Card';
 import DealerCards from './DealerCards';
 const Promise = require('bluebird');
 import { subscribeToGameDetails, updateGameStatus, joinGame } from './Socket';
+import openSocket from 'socket.io-client';
+const socket = openSocket('http://localhost:3000');
 
 //TODO: update deck to take in x cards (6 deck 8 deck, double deck)
 //display wizard of odds table
@@ -19,22 +21,6 @@ class App extends React.Component {
         playerNum, 
         deck
       }, () => console.log(this.state.playerNum)) 
-    });
-
-    subscribeToGameDetails((err, data) =>{
-      if (data.gameUpdates === '1' || data.gameUpdates === '2') {
-        console.log('joining game ' + data.gameUpdates);
-      } else if (data.gameUpdates === 'readyPlayer1' || data.gameUpdates === 'readyPlayer2') {
-        console.log('readyUp ' + data.gameUpdates);
-      } else if (data.gameUpdates === 'dealCard') {
-        console.log('dealCard');
-      } else if (data.gameUpdates === 'completeTurn') {
-        console.log('completeTurn');
-      } else if (data.gameUpdates === 'doubleDown') {
-        console.log('doubleDown');
-      } else if (data.gameUpdates === 'split') {
-        console.log('split');
-      }
     });
 
     this.state = {
@@ -77,7 +63,6 @@ class App extends React.Component {
     this.handleHandPossibilities = this.handleHandPossibilities.bind(this);
     this.doubleDown = this.doubleDown.bind(this);
     this.splitHand = this.splitHand.bind(this);
-    this.handleSoftHand = this.handleSoftHand.bind(this);
     this.resetTable = this.resetTable.bind(this);
     this.disableSplit = this.disableSplit.bind(this);
     this.calculateHandTotal = this.calculateHandTotal.bind(this);
@@ -86,10 +71,35 @@ class App extends React.Component {
     this.timeout = this.timeout.bind(this);
     this.joinGame = this.joinGame.bind(this);
     this.readyUp = this.readyUp.bind(this);
+
+    subscribeToGameDetails((err, data) =>{
+      if (data.gameUpdates === '1' || data.gameUpdates === '2') {
+        this.joinGame(data.gameUpdates, true);
+        console.log('joining game ' + data.gameUpdates);
+      } else if (data.gameUpdates === 'readyPlayer1' || data.gameUpdates === 'readyPlayer2') {
+        this.readyUp(data.gameUpdates, true);
+        console.log('readyUp ' + data.gameUpdates);
+      } else if (data.gameUpdates === 'dealCard') {
+        this.dealCard(false, true);
+        console.log('dealCard');
+      } else if (data.gameUpdates === 'completeTurn') {
+        this.completeTurn(true);
+        console.log('completeTurn');
+      } else if (data.gameUpdates === 'doubleDown') {
+        this.doubleDown(true);
+        console.log('doubleDown');
+      } else if (data.gameUpdates === 'split') {
+        this.splitHand(true);
+        console.log('split');
+      }
+      // socket.emit('gameUpdates', { gameUpdates : 'completed' });
+    });
   }
 
-  joinGame(player) {
-    updateGameStatus(player);
+  joinGame(player, sentFromSocket = false) {
+    if(!sentFromSocket) {
+      updateGameStatus(player);
+    }
     let readyButton;
     let readyButtonDisabled;
     let hasPlayer;
@@ -121,8 +131,10 @@ class App extends React.Component {
     });
   }
 
-  readyUp(player) {
-    updateGameStatus(player);
+  readyUp(player, sentFromSocket = false) {
+    if(!sentFromSocket) {
+      updateGameStatus(player);
+    }
     let readyPlayer = player;
     let readyButton;
     let readyButtonDisabled;
@@ -221,8 +233,10 @@ class App extends React.Component {
   //change this to deal from deck instead of making a random card each time
   //TODO: end the shoe when there's only x% left.
   //possibly chance currPlayer to indexes of 2d array. first index is player, which player hand (if split)
-  dealCard(isDoubleDown = false) {
-    updateGameStatus('dealCard');
+  dealCard(isDoubleDown = false, sentFromSocket = false) {
+    if(!sentFromSocket && this.state.currPlayer !== -1) {
+      updateGameStatus('dealCard');
+    }
     let playerCards;
     let translateX;
     let translateY;
@@ -452,19 +466,20 @@ class App extends React.Component {
       this.disableSplit();
     }
     this.calculateHandTotal(currHand, isDoubleDown);
-    // if()
-    this.handleSoftHand(currHand);
-    //handle soft hands (hands with one ace and another card)
   }
 
-  doubleDown() {
-    updateGameStatus('doubleDown');
+  doubleDown(sentFromSocket = false) {
+    if(!sentFromSocket) {
+      updateGameStatus('doubleDown');
+    }
     this.dealCard(true);
   }
 
   //TODO: need to fix multiple splits display and ordering
-  splitHand() {
-    updateGameStatus('split');
+  splitHand(sentFromSocket = false) {
+    if(!sentFromSocket) {
+      updateGameStatus('split');
+    }
     let currHand = this.state.playersCards[this.state.currPlayer[0]][this.state.currPlayer[1]];
     let splitHand = [currHand.pop()];
 
@@ -492,14 +507,8 @@ class App extends React.Component {
       console.log(this.state.playerXTranslations)
     });
   }
-
-  handleSoftHand(currHand) {
-    
-  }
   
   disableSplit() {
-
-
     if(this.state.currPlayer[0] === 0) {
       //player 1
       let splitButtonStatus = 'hidden';
@@ -519,8 +528,10 @@ class App extends React.Component {
     }
   }
 
-  completeTurn() {
-    updateGameStatus('completeTurn');
+  completeTurn(sentFromSocket = false) {
+    if(!sentFromSocket) {
+      updateGameStatus('completeTurn');
+    }
     let currPlayer;
     let normalPlayButtons;
     let normalPlayButtonsIsDisabled;
@@ -686,13 +697,13 @@ class App extends React.Component {
                 <button id="hit" style={{visibility: this.state.normalPlayButtons}} disabled={this.state.normalPlayButtonsIsDisabled} onClick={() => this.dealCard(false)}>hit</button>
               </div>
               <div className="buttonContainer">
-                <button id="stay" style={{visibility: this.state.normalPlayButtons}} disabled={this.state.normalPlayButtonsIsDisabled} onClick={this.completeTurn}>Stay</button>
+                <button id="stay" style={{visibility: this.state.normalPlayButtons}} disabled={this.state.normalPlayButtonsIsDisabled} onClick={() => this.completeTurn(false)}>Stay</button>
               </div>
               <div className="buttonContainer">
-                <button id="doubleDown" style={{visibility: this.state.normalPlayButtons}} disabled={this.state.normalPlayButtonsIsDisabled} onClick={this.doubleDown}>Double Down</button>
+                <button id="doubleDown" style={{visibility: this.state.normalPlayButtons}} disabled={this.state.normalPlayButtonsIsDisabled} onClick={() => this.doubleDown(false)}>Double Down</button>
               </div>
               <div className="buttonContainer">
-                <button id="split" style={{visibility: this.state.splitButtonStatus}} disabled={this.state.splitIsDisabled} onClick={this.splitHand}>Split</button>
+                <button id="split" style={{visibility: this.state.splitButtonStatus}} disabled={this.state.splitIsDisabled} onClick={() => this.splitHand(false)}>Split</button>
               </div>
             </div>
           </div>
