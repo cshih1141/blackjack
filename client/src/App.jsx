@@ -30,26 +30,45 @@ class App extends React.Component {
       dealerCards: [],
       playerXTranslations:[ [[-10]], [[-10]] ],
       playerYTranslations:[ [[-40]], [[-40]] ],
+
       normalPlayButtons: 'hidden',
       normalPlayButtonsIsDisabled : true,
+      normalBelongsTo: null,
+
       splitButtonStatus: 'hidden', //visible
       splitIsDisabled: true, //false
+      splitBelongsTo: null,
+
       normalPlayButtons2: 'hidden',
       normalPlayButtonsIsDisabled2 : true,
+      normalBelongsTo2: null,
+
       splitButtonStatus2: 'hidden', //visible
       splitIsDisabled2: true, //false
+      splitBelongsTo2: null,
+
       hasPlayer1 : false,
       hasPlayer2 : false,
       readyPlayer1 : false,
       readyPlayer2 : false,
+
       readyButton : 'hidden',
       readyButtonDisabled : true,
+      readyBelongsTo: null,
+
       readyButton2 : 'hidden',
       readyButtonDisabled2 : true,
-      joinButton : 'visible',
+      readyBelongsTo2: null,
+
+      joinButton : 'visible', //clicking join button sets the set of buttons to that connection's player
       joinButtonDisabled : false,
+      joinBelongsTo: null,
+      
+
       joinButton2 : 'visible',
       joinButtonDisabled2 : false,
+      joinBelongsTo2: null,
+
       playerNum : null,
     }
 
@@ -95,38 +114,53 @@ class App extends React.Component {
   }
 
   joinGame(player, sentFromSocket = false) {
+    let joinBelongsTo = this.state.joinBelongsTo;
+    let joinBelongsTo2 = this.state.joinBelongsTo2;
     if(!sentFromSocket) {
       updateGameStatus(player);
     }
-    let readyButton;
-    let readyButtonDisabled;
+    let readyButtonStatus = this.state.readyButton;
+    let readyButtonDisabledStatus = this.state.readyButtonDisabled;
+    let readyButtonStatus2 = this.state.readyButton2;
+    let readyButtonDisabledStatus2 = this.state.readyButtonDisabled2;
     let hasPlayer;
     let joinButton = this.state.joinButton;
     let joinButtonDisabled = this.state.joinButtonDisabled;
     let joinButton2 = this.state.joinButton2;
     let joinButtonDisabled2 = this.state.joinButtonDisabled2;
     if(player === '1') {
-      readyButton = 'readyButton';
-      readyButtonDisabled = 'readyButtonDisabled';
       hasPlayer = 'hasPlayer1';
       joinButton = 'hidden';
       joinButtonDisabled = true;
+      if(!sentFromSocket) {
+        joinBelongsTo = player;
+        readyButtonStatus = 'visible';
+        readyButtonDisabledStatus = false;
+      }
     } else {
-      readyButton = 'readyButton2';
-      readyButtonDisabled = 'readyButtonDisabled2';
       hasPlayer = 'hasPlayer2';
       joinButton2 = 'hidden';
       joinButtonDisabled2 = true;
+      if(!sentFromSocket) {
+        joinBelongsTo2 = player;
+        readyButtonStatus2 = 'visible';
+        readyButtonDisabledStatus2 = false;
+      }
     }
+
     this.setState({
-      [readyButton] : 'visible',
-      [readyButtonDisabled] : false,
+      readyButton2 : readyButtonStatus2,
+      readyButtonDisabled2: readyButtonDisabledStatus2,
+      readyButton : readyButtonStatus,
+      readyButtonDisabled: readyButtonDisabledStatus,
       [hasPlayer] : true,
       joinButton,
       joinButtonDisabled,
       joinButton2,
       joinButtonDisabled2,
-    });
+      joinBelongsTo,
+      joinBelongsTo2,
+    }, () => console.log(this.state));
   }
 
   readyUp(player, sentFromSocket = false) {
