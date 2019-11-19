@@ -2,7 +2,6 @@ import React from 'react';
 import Card from './Card';
 import DealerCards from './DealerCards';
 const Promise = require('bluebird');
-import { SSL_OP_EPHEMERAL_RSA } from 'constants';
 
 //TODO: update deck to take in x cards (6 deck 8 deck, double deck)
 //display wizard of odds table
@@ -17,10 +16,10 @@ class App extends React.Component {
       cardNumber: ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'],
       deck: [],
       currPlayer: [0,0],
-      playersCards: [ [[]] ],
+      playersCards: [ [[]], [[]] ],
       dealerCards: [],
-      playerXTranslations:[ [[-10]] ],
-      playerYTranslations:[ [[-40]] ],
+      playerXTranslations:[ [[-10]], [[-10]] ],
+      playerYTranslations:[ [[-40]], [[-40]] ],
       normalPlayButtons: 'hidden',
       normalPlayButtonsIsDisabled : true,
       splitButtonStatus: 'hidden', //visible
@@ -55,9 +54,10 @@ class App extends React.Component {
     let dealerCards = JSON.parse(JSON.stringify(this.state.dealerCards.slice(0)));
     let playersCards = JSON.parse(JSON.stringify(this.state.playersCards.slice(0)));
     let deck = JSON.parse(JSON.stringify(this.state.deck.slice(0)));
-
+    debugger;
     for (let i = 0; i < 2; i++) {
       for (let j = 0; j < this.state.playersCards.length; j++) {
+        currPlayer = [j,0];
         playerCards = playersCards[currPlayer[0]][currPlayer[1]].slice(0);;
         let translateXlength = playerXTranslations[currPlayer[0]][currPlayer[1]].length;
         let translateYlength = playerYTranslations[currPlayer[0]][currPlayer[1]].length;
@@ -75,7 +75,6 @@ class App extends React.Component {
             playerXTranslations[currPlayer[0]][i][0] -= 90;
           }
         }
-        currPlayer = [j,0];
       }
       if(i < 1) {
         let dealerCard = deck.pop();
@@ -464,6 +463,21 @@ class App extends React.Component {
                                                        playerTranslateX={this.state.playerXTranslations}
                                                        playerTranslateY={this.state.playerYTranslations}
                                                        currPlayer={0}
+                                                       currPlayerIndex={currPlayerIndex}/>)
+              }
+            })
+          }
+        </div>
+        <div className="Cards PlayerCards">
+          {this.state.playersCards[1].map((player, currPlayerIndex) =>  {
+              if(player.length > 0) {
+                return player.map((card, key) => <Card card={card}
+                                                       key={key} 
+                                                       index={key} 
+                                                       currPlayer={this.state.currPlayer}
+                                                       playerTranslateX={this.state.playerXTranslations}
+                                                       playerTranslateY={this.state.playerYTranslations}
+                                                       currPlayer={1}
                                                        currPlayerIndex={currPlayerIndex}/>)
               }
             })
