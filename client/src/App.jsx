@@ -8,6 +8,7 @@ import { subscribeToGameDetails, updateGameStatus, joinGame } from './Socket';
 //display wizard of odds table
 //maybe pop up per hand to show ideal thing.
 //write down different situations - split hands, double down hands etc
+//TODO: refactor player logic to Player.jsx to remove Player 1 and Player 2 redundancy
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -234,7 +235,6 @@ class App extends React.Component {
       if(this.state.currPlayer[0] === 0) {
         //player 1
         if (this.state.playerNum === this.state.joinBelongsTo) {
-          console.log('hello');
           normalPlayButtons = 'visible';
           normalPlayButtonsIsDisabled = false;
         }
@@ -243,7 +243,6 @@ class App extends React.Component {
       } else {
         //player 2
         if (this.state.playerNum === this.state.joinBelongsTo2) {
-          console.log('i am here');
           normalPlayButtons2 = 'visible';
           normalPlayButtonsIsDisabled2 = false;
         }
@@ -446,9 +445,6 @@ class App extends React.Component {
   }
 
   
-
-  //TODO: trigger this automatically when dealer turn
-  //TODO: handle when dealer busts, add end turn functionality. 
   handleDealerHand() {
       let currTotals = this.calculateHandTotal(this.state.dealerCards, false);
       let handCompleted = currTotals[currTotals.length - 1];
@@ -488,10 +484,6 @@ class App extends React.Component {
   //double down hands (any hand, but can't hit again after double)
   //two aces can only get one card each on split
   //soft hands (ace hands)
-  //maybe look at wizard of odds, 
-
-  //TODO: need to fix splits. not activating with two of the same card.
-  //cahnge deck to only output the same card and test
   handleHandPossibilities(isDoubleDown) {
     let currHand = this.state.playersCards[this.state.currPlayer[0]][this.state.currPlayer[1]];
     if (currHand.length === 2 && currHand[0][1] === currHand[1][1]) {
@@ -625,17 +617,12 @@ class App extends React.Component {
           //player 1
           normalPlayButtons = 'hidden';
           normalPlayButtonsIsDisabled = true;
-        } else {
-          //player 2
-          normalPlayButtons2 = 'hidden';
-          normalPlayButtonsIsDisabled2 = true;
-        }
-        if(this.state.currPlayer[0] === 1) {
-          //player 1
           splitButtonStatus = 'hidden'; //visible
           splitIsDisabled = true; //false
         } else {
           //player 2
+          normalPlayButtons2 = 'hidden';
+          normalPlayButtonsIsDisabled2 = true;
           splitButtonStatus2 = 'hidden'; //visible
           splitIsDisabled2 = true; //false
         }
@@ -668,9 +655,6 @@ class App extends React.Component {
         }
       });
     }
-  }
-
-  componentDidMount() {
   }
 
   render() {
