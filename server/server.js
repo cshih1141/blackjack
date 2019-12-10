@@ -3,11 +3,16 @@ const app = express();
 const path = require('path');
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
+const findUserAndUpdate = require('./data/controllers/users.js');
 
 
 
 app.use(express.static(path.join(__dirname, '../public')));
 
+
+app.post('/users', (req, res) => {
+  findUserAndUpdate(req.body, req, res);
+});
 
 const getRandomCard = function(min, max) {
   return min +  (Math.floor(Math.random() * Math.floor(max - min)));
