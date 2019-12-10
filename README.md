@@ -1,5 +1,6 @@
 # blackjack
 blackjack gaming application
+
 ![](blackjack.gif)
 
 ## Table of Contents
