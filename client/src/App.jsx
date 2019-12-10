@@ -56,7 +56,6 @@ class App extends React.Component {
       joinButtonDisabled : false,
       joinBelongsTo: null,
       
-
       joinButton2 : 'visible',
       joinButtonDisabled2 : false,
       joinBelongsTo2: null,
